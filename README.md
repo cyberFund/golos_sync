@@ -1,2 +1,4 @@
-# golos_sync
-Synchronization Golos node to MongoDB
+# Synchronization Golos node to MongoDB
+
+## Synchronization comments
+sync_commnets.py
