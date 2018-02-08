@@ -4,7 +4,7 @@
 sync_comments.py
 ## Synchronization all operations
 sync_all_tsx.py
-## Operations in the Golos
+## Operations in Golos
 - comment
 - comment_options
 - delete_comment
