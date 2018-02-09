@@ -66,6 +66,10 @@ def process_op(opObj, block, blockid):
         save_custom(op, block, blockid)
     elif opType == "limit_order_create":
         save_limit_order_create(op, block, blockid)
+    elif opType == "limit_order_create2":
+        save_limit_order_create2(op, block, blockid)
+    elif opType == "limit_order_cancel":
+        save_limit_order_cancel(op, block, blockid)
     else:
         print('Other opType: {}'.format(opType))
         print('op data: {}'.format(op))
@@ -360,7 +364,7 @@ def save_withdraw_vesting(op, block, blockid):
 
 def save_limit_order_create(op, block, blockid):
     limit_order_create = op.copy()
-    _id = str(blockid) + '/' + limit_order_create['owner'] + '/' + limit_order_create['orderid']
+    _id = str(blockid) + '/' + limit_order_create['owner'] + '/' + str(limit_order_create['orderid'])
     limit_order_create.update({
         '_id': _id,
         '_blockid': blockid,
@@ -368,6 +372,48 @@ def save_limit_order_create(op, block, blockid):
     })
     db.limit_order_create.update({'_id': _id}, limit_order_create, upsert=True)
 
+def save_limit_order_create2(op, block, blockid):
+    limit_order_create2 = op.copy()
+    _id = str(blockid) + '/' + limit_order_create2['owner'] + '/' + str(limit_order_create2['orderid'])
+    limit_order_create2.update({
+        '_id': _id,
+        '_blockid': blockid,
+        '_ts': datetime.strptime(block['timestamp'], "%Y-%m-%dT%H:%M:%S")
+    })
+    db.limit_order_create2.update({'_id': _id}, limit_order_create2, upsert=True)
+
+
+def save_transfer_from_savings(op, block, blockid):
+    transfer_from_savings = op.copy()
+    _id = str(blockid) + '/' + transfer_from_savings['request_id'] + '/' + str(transfer_from_savings['from']) + '/' + str(transfer_from_savings['to'])
+    transfer_from_savings.update({
+        '_id': _id,
+        '_blockid': blockid,
+        '_ts': datetime.strptime(block['timestamp'], "%Y-%m-%dT%H:%M:%S")
+    })
+    db.transfer_from_savings.update({'_id': _id}, transfer_from_savings, upsert=True)
+
+
+def save_transfer_to_savings(op, block, blockid):
+    transfer_to_savings = op.copy()
+    _id = str(blockid) + '/' + transfer_to_savings['from'] + '/' + str(transfer_to_savings['to']) + '/' + str(transfer_to_savings['amount'])
+    transfer_to_savings.update({
+        '_id': _id,
+        '_blockid': blockid,
+        '_ts': datetime.strptime(block['timestamp'], "%Y-%m-%dT%H:%M:%S")
+    })
+    db.limit_order_create2.update({'_id': _id}, transfer_to_savings, upsert=True)
+
+
+def save_limit_order_cancel(op, block, blockid):
+    limit_order_cancel = op.copy()
+    _id = str(blockid) + '/' + limit_order_cancel['owner'] + '/' + str(limit_order_cancel['orderid'])
+    limit_order_cancel.update({
+        '_id': _id,
+        '_blockid': blockid,
+        '_ts': datetime.strptime(block['timestamp'], "%Y-%m-%dT%H:%M:%S")
+    })
+    db.limit_order_cancel.update({'_id': _id}, limit_order_cancel, upsert=True)
 
 
 def save_delete_comment(op, block, blockid):
