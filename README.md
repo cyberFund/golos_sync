@@ -32,10 +32,10 @@ sync_all_tsx.py
 - custom
 - custom_json
 - escrow_transfer  
-example: {'from': 'xtar', 'sbd_amount': '0.000 GBG', 'json_meta': '', 'escrow_expiration': '2017-02-16T15:04:24', 'steem_amount': '0.001 GOLOS', 'to': 'lisazarova', 'ratification_deadline': '2017-02-16T15:03:24', 'escrow_id': 89083512, 'fee': '0.001 GOLOS', 'agent': 'kosmos'}
+> example: {'from': 'xtar', 'sbd_amount': '0.000 GBG', 'json_meta': '', 'escrow_expiration': '2017-02-16T15:04:24', 'steem_amount': '0.001 GOLOS', 'to': 'lisazarova', 'ratification_deadline': '2017-02-16T15:03:24', 'escrow_id': 89083512, 'fee': '0.001 GOLOS', 'agent': 'kosmos'}
 - escrow_approve  
-example: {'who': 'kosmos', 'from': 'xtar', 'to': 'lisazarova', 'approve': False, 'escrow_id': 89083512, 'agent': 'kosmos'}
+> example: {'who': 'kosmos', 'from': 'xtar', 'to': 'lisazarova', 'approve': False, 'escrow_id': 89083512, 'agent': 'kosmos'}
 - escrow_dispute  
-example: {'who': 'xtar', 'from': 'xtar', 'to': 'lisazarova', 'escrow_id': 75654131, 'agent': 'kosmos'}
+> example: {'who': 'xtar', 'from': 'xtar', 'to': 'lisazarova', 'escrow_id': 75654131, 'agent': 'kosmos'}
 - escrow_release  
-example: {'who': 'on0tole', 'from': 'xtar', 'sbd_amount': '0.000 GBG', 'steem_amount': '0.001 GOLOS', 'to': 'kosmos', 'receiver': 'kosmos', 'escrow_id': 59796593, 'agent': 'on0tole'}
+> example: {'who': 'on0tole', 'from': 'xtar', 'sbd_amount': '0.000 GBG', 'steem_amount': '0.001 GOLOS', 'to': 'kosmos', 'receiver': 'kosmos', 'escrow_id': 59796593, 'agent': 'on0tole'}
