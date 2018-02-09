@@ -26,5 +26,8 @@ sync_all_tsx.py
 - withdraw_vesting
 - set_withdraw_vesting_route
 - limit_order_create
+- limit_order_create2
+- transfer_from_savings
+- transfer_to_savings
 - custom
 - custom_json
