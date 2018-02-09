@@ -78,7 +78,10 @@ def process_op(opObj, block, blockid):
         save_escrow_dispute(op, block, blockid)
     elif opType == "escrow_release":
         save_escrow_release(op, block, blockid)
-
+    elif opType == "transfer_to_savings":
+        save_transfer_to_savings(op, block, blockid)
+    elif opType == "transfer_from_savings":
+        save_transfer_from_savings(op, block, blockid)
 
     else:
         print('Other opType: {}'.format(opType))
@@ -106,8 +109,9 @@ def save_convert(op, block, blockid):
         })
         db.convert.update({'_id': _id}, convert, upsert=True)
     except KeyError:
-        pprint("Processing failure. KeyError. {}.".format('Convert'))
-        pprint("Block id: {}".format(blockid))
+        print("Processing failure. KeyError. {}.".format('Convert'))
+        print("Block id: {}".format(blockid))
+        print("{}".format(convert))
 
 
 def save_transfer(op, block, blockid):
@@ -395,7 +399,7 @@ def save_limit_order_create2(op, block, blockid):
 
 def save_transfer_from_savings(op, block, blockid):
     transfer_from_savings = op.copy()
-    _id = str(blockid) + '/' + transfer_from_savings['request_id'] + '/' + str(transfer_from_savings['from']) + '/' + str(transfer_from_savings['to'])
+    _id = str(blockid) + '/' + str(transfer_from_savings['request_id']) + '/' + str(transfer_from_savings['from']) + '/' + str(transfer_from_savings['to'])
     transfer_from_savings.update({
         '_id': _id,
         '_blockid': blockid,
