@@ -70,6 +70,16 @@ def process_op(opObj, block, blockid):
         save_limit_order_create2(op, block, blockid)
     elif opType == "limit_order_cancel":
         save_limit_order_cancel(op, block, blockid)
+    elif opType == "escrow_transfer":
+        save_escrow_transfer(op, block, blockid)
+    elif opType == "escrow_approve":
+        save_escrow_approve(op, block, blockid)
+    elif opType == "escrow_dispute":
+        save_escrow_dispute(op, block, blockid)
+    elif opType == "escrow_release":
+        save_escrow_release(op, block, blockid)
+
+
     else:
         print('Other opType: {}'.format(opType))
         print('op data: {}'.format(op))
@@ -416,6 +426,48 @@ def save_limit_order_cancel(op, block, blockid):
     db.limit_order_cancel.update({'_id': _id}, limit_order_cancel, upsert=True)
 
 
+def save_escrow_transfer(op, block, blockid):
+    op_to_save = op.copy()
+    _id = str(blockid) + '/' + str(op_to_save['escrow_id']) + '/' + str(op_to_save['from']) + '/' + str(op_to_save['to'])
+    op_to_save.update({
+        '_id': _id,
+        '_blockid': blockid,
+        '_ts': datetime.strptime(block['timestamp'], "%Y-%m-%dT%H:%M:%S")
+    })
+    db.escrow_transfer.update({'_id': _id}, op_to_save, upsert=True)
+
+def save_escrow_approve(op, block, blockid):
+    op_to_save = op.copy()
+    _id = str(blockid) + '/' + str(op_to_save['escrow_id']) + '/' + str(op_to_save['from']) + '/' + str(op_to_save['to'])
+    op_to_save.update({
+        '_id': _id,
+        '_blockid': blockid,
+        '_ts': datetime.strptime(block['timestamp'], "%Y-%m-%dT%H:%M:%S")
+    })
+    db.escrow_approve.update({'_id': _id}, op_to_save, upsert=True)
+
+
+def save_escrow_dispute(op, block, blockid):
+    op_to_save = op.copy()
+    _id = str(blockid) + '/' + str(op_to_save['escrow_id']) + '/' + str(op_to_save['from']) + '/' + str(op_to_save['to'])
+    op_to_save.update({
+        '_id': _id,
+        '_blockid': blockid,
+        '_ts': datetime.strptime(block['timestamp'], "%Y-%m-%dT%H:%M:%S")
+    })
+    db.escrow_dispute.update({'_id': _id}, op_to_save, upsert=True)
+
+
+def save_escrow_release(op, block, blockid):
+    op_to_save = op.copy()
+    _id = str(blockid) + '/' + str(op_to_save['escrow_id']) + '/' + str(op_to_save['from']) + '/' + str(op_to_save['to'])
+    op_to_save.update({
+        '_id': _id,
+        '_blockid': blockid,
+        '_ts': datetime.strptime(block['timestamp'], "%Y-%m-%dT%H:%M:%S")
+    })
+    db.escrow_release.update({'_id': _id}, op_to_save, upsert=True)
+
 def save_delete_comment(op, block, blockid):
     delete_comment = op.copy()
     _id = str(blockid) + '/' + delete_comment['author'] + '/' + delete_comment['permlink']
@@ -444,7 +496,7 @@ def sync_all_tsx():
     block_interval = config["STEEMIT_BLOCK_INTERVAL"]
 
     # Last block in the MongoDB
-    init = db.status.find_one({'_id': 'height'})
+    init = db.status.find_one({'_id': 'height_all_tsx'})
     last_block = 1
     if (init):
         last_block = init['value']
