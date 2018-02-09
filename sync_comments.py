@@ -99,7 +99,7 @@ def sync_comments():
     block_interval = config["STEEMIT_BLOCK_INTERVAL"]
 
     # Last block in the MongoDB
-    init = db.status.find_one({'_id': 'height'})
+    init = db.status.find_one({'_id': 'height_comments'})
     last_block = 1
     if (init):
         last_block = init['value']
