@@ -13,82 +13,126 @@ rpc = SteemNodeRPC("ws://localhost:8090", apis=["follow", "database"])
 # MongoDB params
 mongo = MongoClient()
 # Database name in MongoDB
-db = mongo.golos_all_tsx
+db = mongo[sys.argv[1]]
 
 
 def process_op(opObj, block, blockid):
     opType = opObj[0]
     op = opObj[1]
+    fields_to_float = []
     if opType == "comment":
-        # Update the comment
-        # update_comment(op['author'], op['permlink'])
-        save_comment(op, block, blockid)
-    elif opType == "vote":
-        save_vote(op, block, blockid)
+        fields_to_id = ['author', 'permlink']
     elif opType =="convert":
+        # fields_to_id = ['requestid']
+        # fields_to_float = ['amount']
         save_convert(op, block, blockid)
+        return 1
     elif opType == "custom_json":
+        # fields_to_id = []
         save_custom_json(op, block, blockid)
-    elif opType == "account_witness_vote":
-        save_witness_vote(op, block, blockid)
-        update_witness_vote(op, block, blockid)
+        return 1
     elif opType == "pow" or opType == "pow2":
+        # fields_to_id = []
         save_pow(op, block, blockid)
+        return 1
     elif opType == "transfer":
+        # fields_to_id = ['from', 'to']
+        # fields_to_float = ['amount']
         save_transfer(op, block, blockid)
+        return 1
+    elif opType == "vote":
+        fields_to_id = ['voter', 'author', 'permlink']
+    elif opType == "account_witness_vote":
+        fields_to_id = ['account', 'witness']
     elif opType == "curation_reward":
-        save_curation_reward(op, block, blockid)
+        fields_to_id = ['curator', 'comment_author', 'comment_permlink']
+        fields_to_float = ['reward']
     elif opType == "author_reward":
-        save_author_reward(op, block, blockid)
+        fields_to_id = ['author', 'permlink']
+        fields_to_float = ['sbd_payout', 'steem_payout', 'vesting_payout']
     elif opType == "transfer_to_vesting":
-        save_vesting_deposit(op, block, blockid)
+        fields_to_id = ['from', 'to']
+        fields_to_float = ['amount']
     elif opType == "fill_vesting_withdraw":
-        save_vesting_withdraw(op, block, blockid)
+        fields_to_id = ['from_account', 'to_account']
+        fields_to_float = ['deposited', 'withdrawn']
     elif opType == "feed_publish":
-        save_feed_publish(op, block, blockid)
+        fields_to_id = []
     elif opType == "account_witness_proxy":
-        save_account_witness_proxy(op, block, blockid)
+        fields_to_id = ['account']
     elif opType == "account_create":
-        save_account_create(op, block, blockid)
+        fields_to_id = ['new_account_name']
     elif opType == "witness_update":
-        save_witness_update(op, block, blockid)
+        fields_to_id = ['block_signing_key']
     elif opType == "comment_options":
-        save_comment_options(op, block, blockid)
+        fields_to_id = ['author', 'permlink']
     elif opType == "account_update":
-        save_account_update(op, block, blockid)
+        fields_to_id = ['account']
     elif opType == "withdraw_vesting":
-        save_withdraw_vesting(op, block, blockid)
+        fields_to_id = ['account']
     elif opType == "delete_comment":
-        save_delete_comment(op, block, blockid)
+        fields_to_id = ['author', 'permlink']
     elif opType == "set_withdraw_vesting_route":
-        save_withdraw_vesting_route(op, block, blockid)
+        fields_to_id = ['from_account', 'to_account']
     elif opType == "custom":
-        save_custom(op, block, blockid)
+        fields_to_id = ['id', 'required_auths']
     elif opType == "limit_order_create":
-        save_limit_order_create(op, block, blockid)
+        fields_to_id = ['owner', 'orderid']
     elif opType == "limit_order_create2":
-        save_limit_order_create2(op, block, blockid)
+        fields_to_id = ['owner', 'orderid']
     elif opType == "limit_order_cancel":
-        save_limit_order_cancel(op, block, blockid)
+        fields_to_id = ['owner', 'orderid']
     elif opType == "escrow_transfer":
-        save_escrow_transfer(op, block, blockid)
+        fields_to_id = ['escrow_id', 'from', 'to']
     elif opType == "escrow_approve":
-        save_escrow_approve(op, block, blockid)
+        fields_to_id = ['escrow_id', 'from', 'to']
     elif opType == "escrow_dispute":
-        save_escrow_dispute(op, block, blockid)
+        fields_to_id = ['escrow_id', 'from', 'to']
     elif opType == "escrow_release":
-        save_escrow_release(op, block, blockid)
+        fields_to_id = ['escrow_id', 'from', 'to']
     elif opType == "transfer_to_savings":
-        save_transfer_to_savings(op, block, blockid)
+        fields_to_id = ['from', 'to', 'amount']
     elif opType == "transfer_from_savings":
-        save_transfer_from_savings(op, block, blockid)
+        fields_to_id = ['request_id', 'from', 'to']
+    elif opType == "cancel_transfer_from_savings":
+        fields_to_id = ['request_id', 'from']
+    elif opType == "request_account_recovery":
+        fields_to_id = ['recovery_account', 'account_to_recover']
+    elif opType == "recover_account":
+        fields_to_id = ['account_to_recover']
+    elif opType == "change_recovery_account":
+        fields_to_id = ['account_to_recover']
 
     else:
         print('Other opType: {}'.format(opType))
         print('op data: {}'.format(op))
+        return 1
+    save_doc(op, block, blockid, fields_to_id, fields_to_float, opType)
+
+def save_doc(op, block, blockid, fields_to_id, fields_to_float, name_doc):
+    try:
+        op_to_save = op.copy()
+        _id = str(blockid) + ''.join('/' + str(op_to_save[item]) for item in fields_to_id)
+        op_to_save.update({
+            '_id': _id,
+            'blockid': blockid,
+            'ts': datetime.strptime(block['timestamp'], "%Y-%m-%dT%H:%M:%S")
+        })
+        for key in fields_to_float:
+            op_to_save[key] = float(op_to_save[key].split()[0])
+        db[name_doc].update({'_id': _id}, op_to_save, upsert=True)
+    except KeyError:
+        print("Processing failure. KeyError. {}.".format(name_doc))
+        print("Block id: {}".format(blockid))
+        print("{}".format(op))
+    except ValueError:
+        print("Processing failure. ValueError. {}.".format(name_doc))
+        print("Block id: {}".format(blockid))
+        print("{}".format(op))
+
 
 def process_block(block, blockid):
-    save_block(block, blockid)
+    # save_block(block, blockid)
     ops = rpc.get_ops_in_block(blockid, False)
     for tx in block['transactions']:
       for opObj in tx['operations']:
@@ -97,13 +141,22 @@ def process_block(block, blockid):
       process_op(opObj['op'], block, blockid)
 
 
+# def save_block(block, blockid):
+#     doc = block.copy()
+#     doc.update({
+#         '_id': blockid,
+#         'ts': datetime.strptime(doc['timestamp'], "%Y-%m-%dT%H:%M:%S"),
+#     })
+#     db.block.update({'_id': blockid}, doc, upsert=True)
+
+
 def save_convert(op, block, blockid):
     try:
         convert = op.copy()
         _id = str(blockid) + '/' + str(op['requestid'])
         convert.update({
             '_id': _id,
-            '_ts': datetime.strptime(block['timestamp'], "%Y-%m-%dT%H:%M:%S"),
+            'ts': datetime.strptime(block['timestamp'], "%Y-%m-%dT%H:%M:%S"),
             'amount': float(convert['amount'].split()[0]),
             'type': convert['amount'].split()[1]
         })
@@ -119,77 +172,12 @@ def save_transfer(op, block, blockid):
     _id = str(blockid) + '/' + op['from'] + '/' + op['to']
     transfer.update({
         '_id': _id,
-        '_ts': datetime.strptime(block['timestamp'], "%Y-%m-%dT%H:%M:%S"),
+        'ts': datetime.strptime(block['timestamp'], "%Y-%m-%dT%H:%M:%S"),
         'amount': float(transfer['amount'].split()[0]),
         'type': transfer['amount'].split()[1]
     })
     db.transfer.update({'_id': _id}, transfer, upsert=True)
 
-
-def save_curation_reward(op, block, blockid):
-    reward = op.copy()
-    _id = str(blockid) + '/' + op['curator'] + '/' + op['comment_author'] + '/' + op['comment_permlink']
-    reward.update({
-        '_id': _id,
-        '_ts': datetime.strptime(block['timestamp'], "%Y-%m-%dT%H:%M:%S"),
-        'reward': float(reward['reward'].split()[0])
-    })
-    db.curation_reward.update({'_id': _id}, reward, upsert=True)
-
-
-def save_author_reward(op, block, blockid):
-    reward = op.copy()
-    _id = str(blockid) + '/' + op['author'] + '/' + op['permlink']
-    reward.update({
-        '_id': _id,
-        '_ts': datetime.strptime(block['timestamp'], "%Y-%m-%dT%H:%M:%S")
-    })
-    for key in ['sbd_payout', 'steem_payout', 'vesting_payout']:
-        reward[key] = float(reward[key].split()[0])
-    db.author_reward.update({'_id': _id}, reward, upsert=True)
-
-
-def save_vesting_deposit(op, block, blockid):
-    vesting = op.copy()
-    _id = str(blockid) + '/' + op['from'] + '/' + op['to']
-    vesting.update({
-        '_id': _id,
-        '_ts': datetime.strptime(block['timestamp'], "%Y-%m-%dT%H:%M:%S"),
-        'amount': float(vesting['amount'].split()[0])
-    })
-    db.vesting_deposit.update({'_id': _id}, vesting, upsert=True)
-
-
-def save_vesting_withdraw(op, block, blockid):
-    vesting = op.copy()
-    _id = str(blockid) + '/' + op['from_account'] + '/' + op['to_account']
-    vesting.update({
-        '_id': _id,
-        '_ts': datetime.strptime(block['timestamp'], "%Y-%m-%dT%H:%M:%S")
-    })
-    for key in ['deposited', 'withdrawn']:
-        vesting[key] = float(vesting[key].split()[0])
-    db.vesting_withdraw.update({'_id': _id}, vesting, upsert=True)
-
-
-def save_withdraw_vesting_route(op, block, blockid):
-    withdraw_vesting_route = op.copy()
-    _id = str(blockid) + '/' + op['from_account'] + '/' + op['to_account']
-    withdraw_vesting_route.update({
-        '_id': _id,
-        '_ts': datetime.strptime(block['timestamp'], "%Y-%m-%dT%H:%M:%S")
-    })
-    db.withdraw_vesting_route.update({'_id': _id}, withdraw_vesting_route, upsert=True)
-
-
-def save_custom(op, block, blockid):
-    custom = op.copy()
-    _id = str(blockid) + '/' + op['id'] + '/' + op['required_auths']
-    custom.update({
-        '_id': _id,
-        '_ts': datetime.strptime(block['timestamp'], "%Y-%m-%dT%H:%M:%S")
-    })
-    db.custom.update({'_id': _id}, custom, upsert=True)
 
 def save_custom_json(op, block, blockid):
     try:
@@ -200,25 +188,25 @@ def save_custom_json(op, block, blockid):
             if data[0] == 'follow':
                 save_follow(data, op, block, blockid)
     except ValueError:
-        pprint("Processing failure")
-        pprint(blockid)
-        pprint(op['json'])
+        print("Processing failure. ValueError. {}.".format('Custom_json'))
+        print("Block id: {}".format(blockid))
+        print("{}".format(op))
 
 def save_follow(data, op, block, blockid):
     doc = data[1].copy()
     try:
         query = {
-            '_block': blockid,
+            'blockid': blockid,
             'follower': doc['follower'],
             'following': doc['following']
         }
         doc.update({
-            '_block': blockid,
-            '_ts': datetime.strptime(block['timestamp'], "%Y-%m-%dT%H:%M:%S"),
+            'blockid': blockid,
+            'ts': datetime.strptime(block['timestamp'], "%Y-%m-%dT%H:%M:%S"),
         })
         db.follow.update(query, doc, upsert=True)
     except KeyError:
-        pprint("Processing failure. KeyError. save_follow")
+        pprint("Processing failure. KeyError. Save_follow")
         pprint("Block id: {}".format(blockid))
         pprint(doc)
 
@@ -227,13 +215,13 @@ def save_reblog(data, op, block, blockid):
     try:
         doc = data[1].copy()
         query = {
-            '_block': blockid,
+            'blockid': blockid,
             'permlink': doc['permlink'],
             'account': doc['account']
         }
         doc.update({
-            '_block': blockid,
-            '_ts': datetime.strptime(block['timestamp'], "%Y-%m-%dT%H:%M:%S"),
+            'blockid': blockid,
+            'ts': datetime.strptime(block['timestamp'], "%Y-%m-%dT%H:%M:%S"),
         })
         db.reblog.update(query, doc, upsert=True)
     except KeyError:
@@ -242,17 +230,7 @@ def save_reblog(data, op, block, blockid):
         pprint(doc)
 
 
-def save_block(block, blockid):
-    doc = block.copy()
-    doc.update({
-        '_id': blockid,
-        '_ts': datetime.strptime(doc['timestamp'], "%Y-%m-%dT%H:%M:%S"),
-    })
-    db.block.update({'_id': blockid}, doc, upsert=True)
-
-
 def save_pow(op, block, blockid):
-    _id = "unknown"
     if isinstance(op['work'], list):
         _id = str(blockid) + '/' + op['work'][1]['input']['worker_account']
     else:
@@ -260,238 +238,10 @@ def save_pow(op, block, blockid):
     doc = op.copy()
     doc.update({
         '_id': _id,
-        '_ts': datetime.strptime(block['timestamp'], "%Y-%m-%dT%H:%M:%S"),
-        'block': blockid,
+        'ts': datetime.strptime(block['timestamp'], "%Y-%m-%dT%H:%M:%S"),
+        'blockid': blockid,
     })
     db.pow.update({'_id': _id}, doc, upsert=True)
-
-
-def save_vote(op, block, blockid):
-    vote = op.copy()
-    _id = str(blockid) + '/' + op['voter'] + '/' + op['author'] + '/' + op['permlink']
-    vote.update({
-        '_id': _id,
-        '_ts': datetime.strptime(block['timestamp'], "%Y-%m-%dT%H:%M:%S")
-    })
-    db.vote.update({'_id': _id}, vote, upsert=True)
-
-
-def save_feed_publish(op, block, blockid):
-    feed_publish = op.copy()
-    _id = str(blockid)
-    feed_publish.update({
-        '_id': _id,
-        '_ts': datetime.strptime(block['timestamp'], "%Y-%m-%dT%H:%M:%S")
-    })
-    db.feed_publish.update({'_id': _id}, feed_publish, upsert=True)
-
-
-def save_witness_vote(op, block, blockid):
-    witness_vote = op.copy()
-    _id = str(blockid) + '/' + witness_vote['account'] + '/' + witness_vote['witness']
-    witness_vote.update({
-        '_id': _id,
-        '_ts': datetime.strptime(block['timestamp'], "%Y-%m-%dT%H:%M:%S"),
-        '_blockid': blockid
-    })
-    db.witness_vote.update({'_id': _id}, witness_vote, upsert=True)
-
-
-def update_witness_vote(op, block, blockid):
-    witness_vote = op.copy()
-    query = {
-        '_ts': datetime.strptime(block['timestamp'], "%Y-%m-%dT%H:%M:%S"),
-        'account': witness_vote['account'],
-        'witness': witness_vote['witness']
-    }
-    witness_vote.update({
-        '_ts': datetime.strptime(block['timestamp'], "%Y-%m-%dT%H:%M:%S"),
-        '_blockid': blockid
-    })
-    db.witness_vote_current.update(query, witness_vote, upsert=True)
-
-
-def save_account_witness_proxy(op, block, blockid):
-    account_witness_proxy = op.copy()
-    _id = str(blockid) + '/' + account_witness_proxy['account']
-    account_witness_proxy.update({
-        '_id': _id,
-        '_ts': datetime.strptime(block['timestamp'], "%Y-%m-%dT%H:%M:%S")
-    })
-    db.account_witness_proxy.update({'_id': _id}, account_witness_proxy, upsert=True)
-
-
-def save_account_create(op, block, blockid):
-    account_create = op.copy()
-    _id = account_create['new_account_name']
-    account_create.update({
-        '_id': _id,
-        '_blockid': blockid,
-        '_ts': datetime.strptime(block['timestamp'], "%Y-%m-%dT%H:%M:%S")
-    })
-    db.account.update({'_id': _id}, account_create, upsert=True)
-
-
-def save_witness_update(op, block, blockid):
-    witness_update = op.copy()
-    _id = str(blockid) + '/' + str(witness_update['block_signing_key'])
-    witness_update.update({
-        '_id': _id,
-        '_blockid': blockid,
-        '_ts': datetime.strptime(block['timestamp'], "%Y-%m-%dT%H:%M:%S")
-    })
-    db.witness_update.update({'_id': _id}, witness_update, upsert=True)
-
-
-def save_comment_options(op, block, blockid):
-    comment_options = op.copy()
-    _id = str(blockid) + '/' + comment_options['author'] + '/' + comment_options['permlink']
-    comment_options.update({
-        '_id': _id,
-        '_blockid': blockid,
-        '_ts': datetime.strptime(block['timestamp'], "%Y-%m-%dT%H:%M:%S")
-    })
-    db.comment_options.update({'_id': _id}, comment_options, upsert=True)
-
-
-def save_account_update(op, block, blockid):
-    account_update = op.copy()
-    _id = str(blockid) + '/' + account_update['account']
-    account_update.update({
-        '_id': _id,
-        '_blockid': blockid,
-        '_ts': datetime.strptime(block['timestamp'], "%Y-%m-%dT%H:%M:%S")
-    })
-    db.account_update.update({'_id': _id}, account_update, upsert=True)
-
-
-def save_withdraw_vesting(op, block, blockid):
-    withdraw_vesting = op.copy()
-    _id = str(blockid) + '/' + withdraw_vesting['account']
-    withdraw_vesting.update({
-        '_id': _id,
-        '_blockid': blockid,
-        '_ts': datetime.strptime(block['timestamp'], "%Y-%m-%dT%H:%M:%S")
-    })
-    db.withdraw_vesting.update({'_id': _id}, withdraw_vesting, upsert=True)
-
-
-def save_limit_order_create(op, block, blockid):
-    limit_order_create = op.copy()
-    _id = str(blockid) + '/' + limit_order_create['owner'] + '/' + str(limit_order_create['orderid'])
-    limit_order_create.update({
-        '_id': _id,
-        '_blockid': blockid,
-        '_ts': datetime.strptime(block['timestamp'], "%Y-%m-%dT%H:%M:%S")
-    })
-    db.limit_order_create.update({'_id': _id}, limit_order_create, upsert=True)
-
-def save_limit_order_create2(op, block, blockid):
-    limit_order_create2 = op.copy()
-    _id = str(blockid) + '/' + limit_order_create2['owner'] + '/' + str(limit_order_create2['orderid'])
-    limit_order_create2.update({
-        '_id': _id,
-        '_blockid': blockid,
-        '_ts': datetime.strptime(block['timestamp'], "%Y-%m-%dT%H:%M:%S")
-    })
-    db.limit_order_create2.update({'_id': _id}, limit_order_create2, upsert=True)
-
-
-def save_transfer_from_savings(op, block, blockid):
-    transfer_from_savings = op.copy()
-    _id = str(blockid) + '/' + str(transfer_from_savings['request_id']) + '/' + str(transfer_from_savings['from']) + '/' + str(transfer_from_savings['to'])
-    transfer_from_savings.update({
-        '_id': _id,
-        '_blockid': blockid,
-        '_ts': datetime.strptime(block['timestamp'], "%Y-%m-%dT%H:%M:%S")
-    })
-    db.transfer_from_savings.update({'_id': _id}, transfer_from_savings, upsert=True)
-
-
-def save_transfer_to_savings(op, block, blockid):
-    transfer_to_savings = op.copy()
-    _id = str(blockid) + '/' + transfer_to_savings['from'] + '/' + str(transfer_to_savings['to']) + '/' + str(transfer_to_savings['amount'])
-    transfer_to_savings.update({
-        '_id': _id,
-        '_blockid': blockid,
-        '_ts': datetime.strptime(block['timestamp'], "%Y-%m-%dT%H:%M:%S")
-    })
-    db.limit_order_create2.update({'_id': _id}, transfer_to_savings, upsert=True)
-
-
-def save_limit_order_cancel(op, block, blockid):
-    limit_order_cancel = op.copy()
-    _id = str(blockid) + '/' + limit_order_cancel['owner'] + '/' + str(limit_order_cancel['orderid'])
-    limit_order_cancel.update({
-        '_id': _id,
-        '_blockid': blockid,
-        '_ts': datetime.strptime(block['timestamp'], "%Y-%m-%dT%H:%M:%S")
-    })
-    db.limit_order_cancel.update({'_id': _id}, limit_order_cancel, upsert=True)
-
-
-def save_escrow_transfer(op, block, blockid):
-    op_to_save = op.copy()
-    _id = str(blockid) + '/' + str(op_to_save['escrow_id']) + '/' + str(op_to_save['from']) + '/' + str(op_to_save['to'])
-    op_to_save.update({
-        '_id': _id,
-        '_blockid': blockid,
-        '_ts': datetime.strptime(block['timestamp'], "%Y-%m-%dT%H:%M:%S")
-    })
-    db.escrow_transfer.update({'_id': _id}, op_to_save, upsert=True)
-
-def save_escrow_approve(op, block, blockid):
-    op_to_save = op.copy()
-    _id = str(blockid) + '/' + str(op_to_save['escrow_id']) + '/' + str(op_to_save['from']) + '/' + str(op_to_save['to'])
-    op_to_save.update({
-        '_id': _id,
-        '_blockid': blockid,
-        '_ts': datetime.strptime(block['timestamp'], "%Y-%m-%dT%H:%M:%S")
-    })
-    db.escrow_approve.update({'_id': _id}, op_to_save, upsert=True)
-
-
-def save_escrow_dispute(op, block, blockid):
-    op_to_save = op.copy()
-    _id = str(blockid) + '/' + str(op_to_save['escrow_id']) + '/' + str(op_to_save['from']) + '/' + str(op_to_save['to'])
-    op_to_save.update({
-        '_id': _id,
-        '_blockid': blockid,
-        '_ts': datetime.strptime(block['timestamp'], "%Y-%m-%dT%H:%M:%S")
-    })
-    db.escrow_dispute.update({'_id': _id}, op_to_save, upsert=True)
-
-
-def save_escrow_release(op, block, blockid):
-    op_to_save = op.copy()
-    _id = str(blockid) + '/' + str(op_to_save['escrow_id']) + '/' + str(op_to_save['from']) + '/' + str(op_to_save['to'])
-    op_to_save.update({
-        '_id': _id,
-        '_blockid': blockid,
-        '_ts': datetime.strptime(block['timestamp'], "%Y-%m-%dT%H:%M:%S")
-    })
-    db.escrow_release.update({'_id': _id}, op_to_save, upsert=True)
-
-def save_delete_comment(op, block, blockid):
-    delete_comment = op.copy()
-    _id = str(blockid) + '/' + delete_comment['author'] + '/' + delete_comment['permlink']
-    delete_comment.update({
-        '_id': _id,
-        '_blockid': blockid,
-        '_ts': datetime.strptime(block['timestamp'], "%Y-%m-%dT%H:%M:%S")
-    })
-    db.delete_comment.update({'_id': _id}, delete_comment, upsert=True)
-
-
-def save_comment(op, block, blockid):
-    _id = op['author'] + '/' + op['permlink']
-    comment = op.copy()
-    comment.update({
-        '_id': _id,
-        '_blockid': blockid,
-        '_ts': datetime.strptime(block['timestamp'], "%Y-%m-%dT%H:%M:%S")
-    })
-    db.comment.update({'_id': _id}, {'$set': comment}, upsert=True)
 
 
 def sync_all_tsx():
@@ -512,7 +262,7 @@ def sync_all_tsx():
     # to sync from that point onwards. Great for a development environment
     # where you want some data but don't want to sync the entire blockchain.
     # ------------
-    # last_block = 13,000,000
+    # last_block = max(13000000, last_block)
 
     # We are going to loop indefinitely
     while True:
