@@ -133,12 +133,12 @@ def save_doc(op, block, blockid, fields_to_id, fields_to_float, name_doc):
 
 def process_block(block, blockid):
     # save_block(block, blockid)
-    ops = rpc.get_ops_in_block(blockid, False)
+    # ops = rpc.get_ops_in_block(blockid, False)
     for tx in block['transactions']:
       for opObj in tx['operations']:
         process_op(opObj, block, blockid)
-    for opObj in ops:
-      process_op(opObj['op'], block, blockid)
+    # for opObj in ops:
+    #   process_op(opObj['op'], block, blockid)
 
 
 # def save_block(block, blockid):
