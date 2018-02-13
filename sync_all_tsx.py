@@ -120,7 +120,7 @@ def save_doc(op, block, blockid, fields_to_id, fields_to_float, name_doc):
         })
         for key in fields_to_float:
             op_to_save[key] = float(op_to_save[key].split()[0])
-        db[name_doc].update({'_id': _id}, op_to_save, upsert=True)
+        db[name_doc].insert({'_id': _id}, op_to_save)
     except KeyError:
         print("Processing failure. KeyError. {}.".format(name_doc))
         print("Block id: {}".format(blockid))
@@ -129,6 +129,12 @@ def save_doc(op, block, blockid, fields_to_id, fields_to_float, name_doc):
         print("Processing failure. ValueError. {}.".format(name_doc))
         print("Block id: {}".format(blockid))
         print("{}".format(op))
+    except:
+        # print("Processing failure. DublicateKeyError. {}.".format(name_doc))
+        # print("Block id: {}".format(blockid))
+        # print("{}".format(op))
+        pass
+
 
 
 def process_block(block, blockid):
@@ -160,24 +166,28 @@ def save_convert(op, block, blockid):
             'amount': float(convert['amount'].split()[0]),
             'type': convert['amount'].split()[1]
         })
-        db.convert.update({'_id': _id}, convert, upsert=True)
+        db.convert.insert({'_id': _id}, convert)
     except KeyError:
         print("Processing failure. KeyError. {}.".format('Convert'))
         print("Block id: {}".format(blockid))
         print("{}".format(convert))
+    except:
+        pass
 
 
 def save_transfer(op, block, blockid):
-    transfer = op.copy()
-    _id = str(blockid) + '/' + op['from'] + '/' + op['to']
-    transfer.update({
-        '_id': _id,
-        'ts': datetime.strptime(block['timestamp'], "%Y-%m-%dT%H:%M:%S"),
-        'amount': float(transfer['amount'].split()[0]),
-        'type': transfer['amount'].split()[1]
-    })
-    db.transfer.update({'_id': _id}, transfer, upsert=True)
-
+    try:
+        transfer = op.copy()
+        _id = str(blockid) + '/' + op['from'] + '/' + op['to']
+        transfer.update({
+            '_id': _id,
+            'ts': datetime.strptime(block['timestamp'], "%Y-%m-%dT%H:%M:%S"),
+            'amount': float(transfer['amount'].split()[0]),
+            'type': transfer['amount'].split()[1]
+        })
+        db.transfer.insert({'_id': _id}, transfer)
+    except:
+        pass
 
 def save_custom_json(op, block, blockid):
     try:
@@ -191,6 +201,8 @@ def save_custom_json(op, block, blockid):
         print("Processing failure. ValueError. {}.".format('Custom_json'))
         print("Block id: {}".format(blockid))
         print("{}".format(op))
+    except:
+        pass
 
 def save_follow(data, op, block, blockid):
     doc = data[1].copy()
@@ -204,11 +216,13 @@ def save_follow(data, op, block, blockid):
             'blockid': blockid,
             'ts': datetime.strptime(block['timestamp'], "%Y-%m-%dT%H:%M:%S"),
         })
-        db.follow.update(query, doc, upsert=True)
+        db.follow.insert(query, doc)
     except KeyError:
         pprint("Processing failure. KeyError. Save_follow")
         pprint("Block id: {}".format(blockid))
         pprint(doc)
+    except:
+        pass
 
 
 def save_reblog(data, op, block, blockid):
@@ -223,25 +237,30 @@ def save_reblog(data, op, block, blockid):
             'blockid': blockid,
             'ts': datetime.strptime(block['timestamp'], "%Y-%m-%dT%H:%M:%S"),
         })
-        db.reblog.update(query, doc, upsert=True)
+        db.reblog.insert(query, doc)
     except KeyError:
         pprint("Processing failure. KeyError.")
         pprint("Block id: {}".format(blockid))
         pprint(doc)
+    except:
+        pass
 
 
 def save_pow(op, block, blockid):
-    if isinstance(op['work'], list):
-        _id = str(blockid) + '/' + op['work'][1]['input']['worker_account']
-    else:
-        _id = str(blockid) + '/' + op['worker_account']
-    doc = op.copy()
-    doc.update({
-        '_id': _id,
-        'ts': datetime.strptime(block['timestamp'], "%Y-%m-%dT%H:%M:%S"),
-        'blockid': blockid,
-    })
-    db.pow.update({'_id': _id}, doc, upsert=True)
+    try:
+        if isinstance(op['work'], list):
+            _id = str(blockid) + '/' + op['work'][1]['input']['worker_account']
+        else:
+            _id = str(blockid) + '/' + op['worker_account']
+        doc = op.copy()
+        doc.update({
+            '_id': _id,
+            'ts': datetime.strptime(block['timestamp'], "%Y-%m-%dT%H:%M:%S"),
+            'blockid': blockid,
+        })
+        db.pow.insert({'_id': _id}, doc)
+    except:
+        pass
 
 
 def sync_all_tsx():
