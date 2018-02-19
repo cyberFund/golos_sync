@@ -1,3 +1,43 @@
+def create_block(block_id, operation_type, operation):
+  if operation_type in operations_blocks.keys():
+    return operations_blocks[operation_type](block_id, operation_type, operation)
+  else:
+    return OtherBlock(block_id, operation_type, operation)
+
+class Block:
+  fields_to_id = []
+  fields_to_float = []
+
+  def __init__(block_id, operation_type, operation):
+    self.block_id = block_id
+    self.operation_type = operation_type
+    self.operation = operation.copy()
+    self.generate_id()
+    self.convert_fields()
+
+  def generate_id():
+    _id = str(self.block_id) + ''.join('/' + str(self.operation[item]) for item in self.fields_to_id)
+    self.operation.update({"_id": _id})
+
+  def convert_fields():
+    for key in self.fields_to_float:
+      self.operation[key] = float(self.operation[key].split()[0])
+
+  def to_dict():
+    return self.operation
+
+  def get_collection():
+    return self.operation_type
+
+class CommentBlock(Block):
+  fields_to_id = ['author', 'permlink']
+
+class OtherBlock(Block):
+  def __init__(block_id, operation_type, operation):
+    super().__init__(block_id, operation_type, operation)
+    print('Other operation type: {}'.format(operation_type))
+    print('Operation data: {}'.format(operation))
+
 operations_blocks = {
   "comment": CommentBlock,
   # "convert": ConvertBlock,
@@ -35,33 +75,3 @@ operations_blocks = {
   # "recover_account": RecoverAccountBlock,
   # "change_recovery_account": ChangeRecoveryAccountBlock,
 }
-
-def create_block(operation_type, operation):
-  if operation_type in operations_blocks.keys():
-    return operations_blocks[operation_type](operation)
-  else:
-    return OtherBlock(operation)
-
-class Block:
-  def __init__(operation):
-    pass
-
-  def generate_id():
-    pass
-
-  def convert_fields():
-    pass
-
-  def to_dict():
-    pass
-
-  def get_collection():
-    pass
-
-class OtherBlock(Block):
-  def __init__(operation):
-    super().__init__(operation)
-    print('Unsupported operation. Operation data: {}'.format(operation))
-
-class CommentBlock(Block):
-  pass
