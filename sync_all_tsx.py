@@ -5,8 +5,8 @@ from tqdm import tqdm
 import json
 import time
 import sys
-from .connectors import MongoConnector
-from .blocks import create_block
+from connectors import MongoConnector
+from blocks import create_block
 
 # Golos node params
 rpc = SteemNodeRPC("ws://localhost:8090", apis=["follow", "database"])
@@ -15,9 +15,8 @@ connector = MongoConnector(database=sys.argv[1])
 def process_op(opObj, block, blockid):
     opType = opObj[0]
     op = opObj[1]
-    block = create_block(blockid, opType, op)
-    connector.save_block(block)
-    save_doc(op, block, blockid, fields_to_id, fields_to_float, opType)
+    block_object = create_block(blockid, block, opType, op)
+    connector.save_block(block_object)
 
 def process_block(block, blockid):
     # save_block(block, blockid)
@@ -36,114 +35,6 @@ def process_block(block, blockid):
 #         'ts': datetime.strptime(doc['timestamp'], "%Y-%m-%dT%H:%M:%S"),
 #     })
 #     db.block.update({'_id': blockid}, doc, upsert=True)
-
-
-def save_convert(op, block, blockid):
-    try:
-        convert = op.copy()
-        _id = str(blockid) + '/' + str(op['requestid'])
-        convert.update({
-            '_id': _id,
-            'ts': datetime.strptime(block['timestamp'], "%Y-%m-%dT%H:%M:%S"),
-            'amount': float(convert['amount'].split()[0]),
-            'type': convert['amount'].split()[1]
-        })
-        db.convert.insert({'_id': _id}, convert)
-    except KeyError:
-        print("Processing failure. KeyError. {}.".format('Convert'))
-        print("Block id: {}".format(blockid))
-        print("{}".format(convert))
-    except:
-        pass
-
-
-def save_transfer(op, block, blockid):
-    try:
-        transfer = op.copy()
-        _id = str(blockid) + '/' + op['from'] + '/' + op['to']
-        transfer.update({
-            '_id': _id,
-            'ts': datetime.strptime(block['timestamp'], "%Y-%m-%dT%H:%M:%S"),
-            'amount': float(transfer['amount'].split()[0]),
-            'type': transfer['amount'].split()[1]
-        })
-        db.transfer.insert({'_id': _id}, transfer)
-    except:
-        pass
-
-def save_custom_json(op, block, blockid):
-    try:
-        data = json.loads(op['json'])
-        if type(data) is list:
-            if data[0] == 'reblog':
-                save_reblog(data, op, block, blockid)
-            if data[0] == 'follow':
-                save_follow(data, op, block, blockid)
-    except ValueError:
-        print("Processing failure. ValueError. {}.".format('Custom_json'))
-        print("Block id: {}".format(blockid))
-        print("{}".format(op))
-    except:
-        pass
-
-def save_follow(data, op, block, blockid):
-    doc = data[1].copy()
-    try:
-        query = {
-            'blockid': blockid,
-            'follower': doc['follower'],
-            'following': doc['following']
-        }
-        doc.update({
-            'blockid': blockid,
-            'ts': datetime.strptime(block['timestamp'], "%Y-%m-%dT%H:%M:%S"),
-        })
-        db.follow.insert(query, doc)
-    except KeyError:
-        pprint("Processing failure. KeyError. Save_follow")
-        pprint("Block id: {}".format(blockid))
-        pprint(doc)
-    except:
-        pass
-
-
-def save_reblog(data, op, block, blockid):
-    try:
-        doc = data[1].copy()
-        query = {
-            'blockid': blockid,
-            'permlink': doc['permlink'],
-            'account': doc['account']
-        }
-        doc.update({
-            'blockid': blockid,
-            'ts': datetime.strptime(block['timestamp'], "%Y-%m-%dT%H:%M:%S"),
-        })
-        db.reblog.insert(query, doc)
-    except KeyError:
-        pprint("Processing failure. KeyError.")
-        pprint("Block id: {}".format(blockid))
-        pprint(doc)
-    except:
-        pass
-
-
-def save_pow(op, block, blockid):
-    try:
-        if isinstance(op['work'], list):
-            _id = str(blockid) + '/' + op['work'][1]['input']['worker_account']
-        else:
-            _id = str(blockid) + '/' + op['worker_account']
-        doc = op.copy()
-        doc.update({
-            '_id': _id,
-            'ts': datetime.strptime(block['timestamp'], "%Y-%m-%dT%H:%M:%S"),
-            'blockid': blockid,
-        })
-        db.pow.insert({'_id': _id}, doc)
-    except:
-        pass
-
 
 def sync_all_tsx():
     # Let's find out how often blocks are generated!

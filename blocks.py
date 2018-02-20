@@ -1,15 +1,18 @@
-def create_block(block_id, operation_type, operation):
+from datetime import datetime
+
+def create_block(block_id, block, operation_type, operation):
   if operation_type in operations_blocks.keys():
-    return operations_blocks[operation_type](block_id, operation_type, operation)
+    return operations_blocks[operation_type](block_id, block, operation_type, operation)
   else:
-    return OtherBlock(block_id, operation_type, operation)
+    return OtherBlock(block_id, block, operation_type, operation)
 
 class Block:
   fields_to_id = []
   fields_to_float = []
 
-  def __init__(self, block_id, operation_type, operation):
+  def __init__(self, block_id, block, operation_type, operation):
     self.block_id = block_id
+    self.block = block
     self.operation_type = operation_type
     self.operation = operation.copy()
     self.add_base_fields()
@@ -25,7 +28,7 @@ class Block:
     })
 
   def get_timestamp(self):
-    return datetime.strptime(self.operation['timestamp'], "%Y-%m-%dT%H:%M:%S")
+    return datetime.strptime(self.block['timestamp'], "%Y-%m-%dT%H:%M:%S")
 
   def get_id(self):
     return str(self.block_id) + ''.join('/' + str(self.operation[item]) for item in self.fields_to_id)
@@ -203,7 +206,7 @@ class ChangeRecoveryAccountBlock(Block):
   fields_to_id = ['account_to_recover']  
 
 class OtherBlock(Block):
-  def __init__(self, block_id, operation_type, operation):
+  def __init__(self, block_id, block, operation_type, operation):
     super().__init__(block_id, operation_type, operation)
     print('Other operation type: {}'.format(operation_type))
     print('Operation data: {}'.format(operation))
