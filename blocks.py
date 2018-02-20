@@ -71,6 +71,9 @@ class PowBlock(Block):
     else:
       return super().get_id()
 
+  def get_collection(self):
+    return "pow"
+
 
 class TransferBlock(Block):
   fields_to_id = ['from', 'to']
