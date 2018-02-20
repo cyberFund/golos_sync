@@ -41,3 +41,8 @@ class MongoConnector(Connector):
 
   def update_last_block(self, last_block):
     self.database.status.update({'_id': 'height_all_tsx'}, {"$set": {'value': last_block}}, upsert=True)
+
+  def save_comment(self, comment):
+    dictionary = comment.to_dict()
+    comment_id = comment.get_id()
+    self.database.comment.update({'_id': comment_id}, {"$set": dictionary}, upsert=True)

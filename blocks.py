@@ -1,6 +1,7 @@
 from datetime import datetime
 import pdb
 import json
+from comments import NeedUpdateComment
 
 def create_block(block_id, block, operation_type, operation):
   if operation_type in operations_blocks.keys():
@@ -13,8 +14,6 @@ class Block:
   fields_to_float = []
 
   def __init__(self, block_id, block, operation_type, operation):
-    # print(operation_type)
-    # print(operation)
     self.block_id = block_id
     self.block = block
     self.operation_type = operation_type
@@ -50,7 +49,18 @@ class Block:
   def get_query(self):
     return {"_id": self.operation["_id"]}
 
-class CommentBlock(Block):
+  def use_connector(self, connector):
+    pass
+
+class UpdateCommentBlock(Block):
+  def use_connector(self, connector):
+    comment = NeedUpdateComment({
+      'author': self.operation['author'],
+      'permlink': self.operation['permlink']
+    })
+    connector.save_comment(comment)
+
+class CommentBlock(UpdateCommentBlock):
   fields_to_id = ['author', 'permlink']
 
 class ConvertBlock(Block):
@@ -121,7 +131,7 @@ class CustomJSONBlock(Block):
   def get_query(self):
     return self.query
 
-class VoteBlock(Block):
+class VoteBlock(UpdateCommentBlock):
   fields_to_id = ['voter', 'author', 'permlink']
 
 class AccountWitnessVoteBlock(Block):
@@ -131,7 +141,7 @@ class CurationRewardBlock(Block):
   fields_to_id = ['curator', 'comment_author', 'comment_permlink']
   fields_to_float = ['reward']
 
-class AuthorRewardBlock(Block):
+class AuthorRewardBlock(UpdateCommentBlock):
   fields_to_id = ['curator', 'comment_author', 'comment_permlink']
   fields_to_float = ['reward']
 
@@ -214,7 +224,7 @@ class ChangeRecoveryAccountBlock(Block):
 
 class OtherBlock(Block):
   def __init__(self, block_id, block, operation_type, operation):
-    super().__init__(block_id, operation_type, operation)
+    super().__init__(block_id, block, operation_type, operation)
     print('Other operation type: {}'.format(operation_type))
     print('Operation data: {}'.format(operation))
 
