@@ -15,36 +15,18 @@ mongo = MongoClient()
 db = mongo.golos_comments
 
 
-def process_op(opObj, block, blockid):
-    opType = opObj[0]
-    op = opObj[1]
-    if opType == "comment":
-        # Update the comment after adding comment
-        update_comment(op['author'], op['permlink'])
-    if opType == "vote":
-        # Update the comment after voting
-        update_comment(op['author'], op['permlink'])
-    if opType == "author_reward":
-        # Update the comment after comment reward
-        update_comment(op['author'], op['permlink'])
-
-def save_block(block, blockid):
-    doc = block.copy()
-    doc.update({
-        '_id': blockid,
-        '_ts': datetime.strptime(doc['timestamp'], "%Y-%m-%dT%H:%M:%S"),
-    })
-    db.block.update({'_id': blockid}, doc, upsert=True)
-
-
 def process_block(block, blockid):
-    save_block(block, blockid)
-    ops = rpc.get_ops_in_block(blockid, False)
+    comment_list = []
     for tx in block['transactions']:
       for opObj in tx['operations']:
-        process_op(opObj, block, blockid)
-    for opObj in ops:
-      process_op(opObj['op'], block, blockid)
+          opType = opObj[0]
+          op = opObj[1]
+          if opType in ("comment", "vote", "author_reward"):
+              # Update the comment after adding comment
+              if [op['author'], op['permlink']] not in comment_list:
+                  comment_list.append([op['author'], op['permlink']])
+    for item in comment_list:
+        update_comment(item[0], item[1])
 
 
 def update_comment(author, permlink):
