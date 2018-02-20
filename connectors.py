@@ -23,7 +23,7 @@ class MongoConnector(Connector):
       collection = block.get_collection()
       dictionary = block.to_dict()
       query = block.get_query()
-      self.database[collection].insert(query, dictionary)    
+      self.database[collection].update(query, {"$set": dictionary}, upsert=True)    
     except:
       print("Exception in block {} ({})".format(block.block_id, block.to_dict())) 
 
@@ -32,7 +32,7 @@ class MongoConnector(Connector):
     if (init):
       return init['value']
     else: 
-      return 10000
+      return 1
 
   def update_last_block(self, last_block):
     self.database.status.update({'_id': 'height_all_tsx'}, {"$set": {'value': last_block}}, upsert=True)
