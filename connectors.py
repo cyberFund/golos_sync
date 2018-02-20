@@ -1,4 +1,4 @@
-from pymongo import MongoClient
+from pymongo import MongoClient, ASCENDING
 
 class Connector:
   def __init__(self):
@@ -17,6 +17,11 @@ class MongoConnector(Connector):
   def __init__(self, database, host="localhost:27017"):
     self.client = MongoClient(host)
     self.database = self.client[database]
+    self.create_indices()
+
+  def create_indices(self):
+    self.database.reblog.create_index([('blockid', ASCENDING), ('permlink', ASCENDING), ('account', ASCENDING)])
+    self.database.follow.create_index([('blockid', ASCENDING), ('follower', ASCENDING), ('following', ASCENDING)])
 
   def save_block(self, block):
     try:
