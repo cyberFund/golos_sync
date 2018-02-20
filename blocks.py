@@ -1,4 +1,6 @@
 from datetime import datetime
+import pdb
+import json
 
 def create_block(block_id, block, operation_type, operation):
   if operation_type in operations_blocks.keys():
@@ -11,6 +13,8 @@ class Block:
   fields_to_float = []
 
   def __init__(self, block_id, block, operation_type, operation):
+    # print(operation_type)
+    # print(operation)
     self.block_id = block_id
     self.block = block
     self.operation_type = operation_type
@@ -95,7 +99,7 @@ class CustomJSONBlock(Block):
   def convert_reblog(self):
     self.collection = "reblog"
     self.query = {
-      'blockid': blockid,
+      'blockid': self.block_id,
       'permlink': self.operation['permlink'],
       'account': self.operation['account']
     }
@@ -103,9 +107,9 @@ class CustomJSONBlock(Block):
   def convert_follow(self):
     self.collection = "follow"
     self.query = {
-      'blockid': blockid,
-      'follower': doc['follower'],
-      'following': doc['following']
+      'blockid': self.block_id,
+      'follower': self.operation['follower'],
+      'following': self.operation['following']
     }
 
   def get_collection(self):
@@ -146,7 +150,7 @@ class AccountCreateBlock(Block):
   fields_to_id = ['new_account_name']
 
 class WitnessUpdateBlock(Block):
-  fields_to_id = ['new_account_name']
+  fields_to_id = ['block_signing_key']
 
 class CommentOptionsBlock(Block):
   fields_to_id = ['author', 'permlink']
