@@ -34,7 +34,8 @@ class UpdatedComment(Comment):
     super().__init__(comment)
     self.fix_active_votes()
     self.convert_fields()
-    self.add_scanned_date()
+    self.add_scanned()
+    self.remove_need_update()
 
   def fix_active_votes(self):
     active_votes = []
@@ -61,7 +62,7 @@ class UpdatedComment(Comment):
   def add_scanned(self):
     self.comment['scanned'] = datetime.now()
 
-  def remove_need_uodate(self):
+  def remove_need_update(self):
     self.comment['need_update'] = False
 
   def use_connector(self, connector):
