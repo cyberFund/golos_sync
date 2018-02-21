@@ -13,9 +13,12 @@ from time import sleep
 
 BLOCKS_PER_TASK = 1000
 
-rpc = SteemNodeRPC("ws://localhost:8090", apis=["follow", "database"])
-connector = MongoConnector(database=sys.argv[1])
 app = Celery('sync_all_tsx', broker='redis://localhost:6379')
+
+def get_connectors():
+  rpc = SteemNodeRPC("ws://localhost:8090", apis=["follow", "database"])
+  connector = MongoConnector(database=sys.argv[1])
+  return rpc, connector
 
 def process_op(opObj, block, blockid):
   opType = opObj[0]
@@ -30,12 +33,14 @@ def process_block(block, blockid):
 
 @app.task
 def sync_tsx(blocks):
+  rpc, connector = get_connectors()
   for block_number in tqdm(blocks):
     block = rpc.get_block(block_number)
     process_block(block, block_number)
   sys.stdout.flush()
 
 if __name__ == '__main__':
+  rpc, connector = get_connectors()
   config = rpc.get_config()
   block_interval = config["STEEMIT_BLOCK_INTERVAL"]
   last_block = connector.find_last_block()
