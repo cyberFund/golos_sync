@@ -13,6 +13,12 @@ class Connector:
   def update_last_block(self, last_block):
     pass
 
+  def save_comment(self, comment):
+    pass
+
+  def get_comments_to_update(self):
+    pass
+
 class MongoConnector(Connector):
   def __init__(self, database, host="localhost:27017"):
     self.client = MongoClient(host)
@@ -28,6 +34,7 @@ class MongoConnector(Connector):
       collection = block.get_collection()
       dictionary = block.to_dict()
       query = block.get_query()
+      block.use_connector(self)
       self.database[collection].update(query, {"$set": dictionary}, upsert=True)    
     except:
       print("Exception in block {} ({})".format(block.block_id, block.to_dict())) 
@@ -45,4 +52,8 @@ class MongoConnector(Connector):
   def save_comment(self, comment):
     dictionary = comment.to_dict()
     comment_id = comment.get_id()
+    comment.use_connector(self)
     self.database.comment.update({'_id': comment_id}, {"$set": dictionary}, upsert=True)
+
+  def get_comments_to_update(self):
+    return self.database.comment.find({'need_update': True})

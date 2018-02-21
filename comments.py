@@ -18,6 +18,12 @@ class Comment:
   def to_dict(self):
     return self.comment
 
+  def use_connector(self, connector):
+    pass
+
+class ParentComment(Comment):
+  pass
+
 class NeedUpdateComment(Comment):
   def __init__(self, comment):
     super().__init__(comment)
@@ -57,3 +63,15 @@ class UpdatedComment(Comment):
 
   def remove_need_uodate(self):
     self.comment['need_update'] = False
+
+  def use_connector(self, connector):
+    if self.comment['depth'] > 0 and self.comment['url'] != '':
+      url = self.comment['url'].split('#')[0]
+      parts = url.split('/')
+      parent_comment = ParentComment({
+        'author': parts[2].replace('@', ''),
+        'permlink': parts[3],
+        'last_reply': self.comment['created'],
+        'last_reply_by': self.comment['author']
+      })
+      connector.save_comment(parent_comment)
