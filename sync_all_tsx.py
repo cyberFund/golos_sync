@@ -9,6 +9,7 @@ from connectors import MongoConnector
 from blocks import create_block
 import numpy as np
 from celery import Celery
+from time import sleep
 
 BLOCKS_PER_TASK = 1000
 
@@ -17,15 +18,15 @@ connector = MongoConnector(database=sys.argv[1])
 app = Celery('sync_all_tsx', broker='redis://localhost:6379')
 
 def process_op(opObj, block, blockid):
-opType = opObj[0]
-op = opObj[1]
-block_object = create_block(blockid, block, opType, op)
-connector.save_block(block_object)
+  opType = opObj[0]
+  op = opObj[1]
+  block_object = create_block(blockid, block, opType, op)
+  connector.save_block(block_object)
 
 def process_block(block, blockid):
   for tx in block['transactions']:
     for opObj in tx['operations']:
-    process_op(opObj, block, blockid)
+      process_op(opObj, block, blockid)
 
 @app.task
 def sync_tsx(blocks):
@@ -46,6 +47,7 @@ if __name__ == '__main__':
       current_block = props['last_irreversible_block_num']
 
     new_blocks = list(range(last_block, current_block))
-    for chunk in np.array_split(new_blocks, round(all_range / BLOCKS_PER_TASK)):
-      sync_tsx(chunk)
+    for chunk in tqdm(np.array_split(new_blocks, round((current_block - last_block) / BLOCKS_PER_TASK))):
+      sync_tsx.delay(chunk.tolist())
     connector.update_last_block(current_block)
+    last_block = current_block
