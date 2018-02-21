@@ -11,36 +11,36 @@ import numpy as np
 from celery import Celery
 from time import sleep
 
-BLOCKS_PER_TASK = 1000
+BLOCKS_PER_TASK = 10000
 
 app = Celery('sync_all_tsx', broker='redis://localhost:6379')
 
-def get_connectors():
+def get_connectors(mongo_database):
   rpc = SteemNodeRPC("ws://localhost:8090", apis=["follow", "database"])
-  connector = MongoConnector(database=sys.argv[1])
+  connector = MongoConnector(database=mongo_database)
   return rpc, connector
 
-def process_op(opObj, block, blockid):
+def process_op(connector, opObj, block, blockid):
   opType = opObj[0]
   op = opObj[1]
   block_object = create_block(blockid, block, opType, op)
   connector.save_block(block_object)
 
-def process_block(block, blockid):
+def process_block(connector, block, blockid):
   for tx in block['transactions']:
     for opObj in tx['operations']:
-      process_op(opObj, block, blockid)
+      process_op(connector, opObj, block, blockid)
 
 @app.task
-def sync_tsx(blocks):
-  rpc, connector = get_connectors()
+def sync_tsx(mongo_database, blocks):
+  rpc, connector = get_connectors(mongo_database)
   for block_number in tqdm(blocks):
     block = rpc.get_block(block_number)
-    process_block(block, block_number)
+    process_block(connector, block, block_number)
   sys.stdout.flush()
 
 if __name__ == '__main__':
-  rpc, connector = get_connectors()
+  rpc, connector = get_connectors(sys.argv[1])
   config = rpc.get_config()
   block_interval = config["STEEMIT_BLOCK_INTERVAL"]
   last_block = connector.find_last_block()
@@ -53,6 +53,6 @@ if __name__ == '__main__':
 
     new_blocks = list(range(last_block, current_block))
     for chunk in tqdm(np.array_split(new_blocks, round((current_block - last_block) / BLOCKS_PER_TASK))):
-      sync_tsx.delay(chunk.tolist())
+      sync_tsx.delay(sys.argv[1], chunk.tolist())
     connector.update_last_block(current_block)
     last_block = current_block
