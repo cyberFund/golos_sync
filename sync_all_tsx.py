@@ -10,15 +10,11 @@ from blocks import create_block
 import numpy as np
 from celery import Celery
 from time import sleep
+from utils import get_connectors
 
 BLOCKS_PER_TASK = 10000
 
 app = Celery('sync_all_tsx', broker='redis://localhost:6379')
-
-def get_connectors(mongo_database):
-  rpc = SteemNodeRPC("ws://localhost:8090", apis=["follow", "database"])
-  connector = MongoConnector(database=mongo_database)
-  return rpc, connector
 
 def process_op(connector, opObj, block, blockid):
   opType = opObj[0]
