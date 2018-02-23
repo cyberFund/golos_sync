@@ -36,8 +36,9 @@ class MongoConnector(Connector):
       query = block.get_query()
       block.use_connector(self)
       self.database[collection].update(query, {"$set": dictionary}, upsert=True)    
-    except:
+    except Exception as e:
       print("Exception in block {} ({})".format(block.block_id, block.to_dict())) 
+      print(e)
 
   def find_last_block(self):
     init = self.database.status.find_one({'_id': 'height_all_tsx'})

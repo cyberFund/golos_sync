@@ -24,10 +24,10 @@ class Account:
   def get_collection(self):
     return "account"
 
-class NeedUpdateAccount:
+class NeedUpdateAccount(Account):
   def __init__(self, account):
     super().__init__(account)
     account['need_update'] = True
 
-class UpdatedAccount:
+class UpdatedAccount(Account):
   pass

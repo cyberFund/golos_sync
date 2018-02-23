@@ -8,6 +8,7 @@ import sys
 from tqdm import tqdm
 from comments import UpdatedComment
 from utils import get_connectors
+from celery import Celery
 
 COMMENTS_PER_TASK = 1000
 app = Celery('sync_comments', broker='redis://localhost:6379')
@@ -24,13 +25,12 @@ if __name__ == '__main__':
   rpc, connector = get_connectors(sys.argv[1])
   config = rpc.get_config()
   block_interval = config["STEEMIT_BLOCK_INTERVAL"]
-  while True:
-    comments = connector.get_instances_to_update('comment')
-    task_comments = []
-    for comment in tqdm(comments):
-      task_comments.append(comment)
-      if len(task_comments) >= COMMENTS_PER_TASK:
-        sync_comments.delay(sys.argv[1], task_comments)
-        task_comments = []
-    if len(task_comments):
+  comments = connector.get_instances_to_update('comment')
+  task_comments = []
+  for comment in tqdm(comments):
+    task_comments.append(comment)
+    if len(task_comments) >= COMMENTS_PER_TASK:
       sync_comments.delay(sys.argv[1], task_comments)
+      task_comments = []
+  if len(task_comments):
+    sync_comments.delay(sys.argv[1], task_comments)
