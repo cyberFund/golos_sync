@@ -13,10 +13,10 @@ class Connector:
   def update_last_block(self, last_block):
     pass
 
-  def save_comment(self, comment):
+  def save_instance(self, instance):
     pass
 
-  def get_comments_to_update(self):
+  def get_instances_to_update(self, collection):
     pass
 
 class MongoConnector(Connector):
@@ -49,11 +49,13 @@ class MongoConnector(Connector):
   def update_last_block(self, last_block):
     self.database.status.update({'_id': 'height_all_tsx'}, {"$set": {'value': last_block}}, upsert=True)
 
-  def save_comment(self, comment):
-    dictionary = comment.to_dict()
-    comment_id = comment.get_id()
-    comment.use_connector(self)
-    self.database.comment.update({'_id': comment_id}, {"$set": dictionary}, upsert=True)
+  # TODO join method with save_block
+  def save_instance(self, instance):
+    dictionary = instance.to_dict()
+    instance_id = instance.get_id()
+    collection = instance.get_collection()
+    instance.use_connector(self)
+    self.database[collection].update({'_id': instance_id}, {"$set": dictionary}, upsert=True)
 
-  def get_comments_to_update(self):
-    return self.database.comment.find({'need_update': True})
+  def get_instances_to_update(self, collection):
+    return self.database[collection].find({'need_update': True})

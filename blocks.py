@@ -2,6 +2,7 @@ from datetime import datetime
 import pdb
 import json
 from comments import NeedUpdateComment
+from account import NeedUpdateAccount
 
 def create_block(block_id, block, operation_type, operation):
   if operation_type in operations_blocks.keys():
@@ -52,13 +53,22 @@ class Block:
   def use_connector(self, connector):
     pass
 
+class UpdateAuthorBlock(Block):
+  def use_connector(self, connector):
+    super().use_connector(connector)
+    account = NeedUpdateAccount({
+      'name': self.operation['author']
+    })
+    connector.save_instance(account)
+
 class UpdateCommentBlock(Block):
   def use_connector(self, connector):
+    super().use_connector(connector)
     comment = NeedUpdateComment({
       'author': self.operation['author'],
       'permlink': self.operation['permlink']
     })
-    connector.save_comment(comment)
+    connector.save_instance(comment)
 
 class CommentBlock(UpdateCommentBlock):
   fields_to_id = ['author', 'permlink']

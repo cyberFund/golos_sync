@@ -21,6 +21,9 @@ class Comment:
   def use_connector(self, connector):
     pass
 
+  def get_collection(self):
+    return "comment"
+
 class ParentComment(Comment):
   pass
 
@@ -75,4 +78,4 @@ class UpdatedComment(Comment):
         'last_reply': self.comment['created'],
         'last_reply_by': self.comment['author']
       })
-      connector.save_comment(parent_comment)
+      connector.save_instance(parent_comment)
