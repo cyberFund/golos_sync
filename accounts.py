@@ -30,4 +30,6 @@ class NeedUpdateAccount(Account):
     account['need_update'] = True
 
 class UpdatedAccount(Account):
-  pass
+  def __init__(self, account):
+    super().__init__(account)
+    account['need_update'] = False

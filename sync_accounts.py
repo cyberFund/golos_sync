@@ -34,4 +34,4 @@ if __name__ == '__main__':
       sync_accounts.delay(sys.argv[1], task_accounts)
       task_accounts = []
   if len(task_accounts):
-    task_accounts.delay(sys.argv[1], task_accounts)
+    sync_accounts.delay(sys.argv[1], task_accounts)
