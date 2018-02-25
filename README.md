@@ -8,7 +8,13 @@ sync_all_tsx.py
 - comment
 > example: 
 ```javascript 
-
+{'parent_permlink': 'ru--konkurs', 
+ 'json_metadata' : '{\'tags\':[\'ru--konkurs\',\'ru--foto\',\'ru--fotografiya\',\'ru--golos\'],\'image\':[\'http://i.imgur.com/QGuqzox.jpg\'],\'links\':[\'http://i.imgur.com/QGuqzox.jpg\',\'https://golos.io/@antonkostroma\'],\'app\':\'steemit/0.1\',\'format\':\'markdown\'}', 
+ 'author' : 'antonkostroma', 
+ 'parent_author' : '', 
+ 'title' : 'Пост-загадка. Определите стороны света по фотографии. Приз 10 золотых.', 
+ 'permlink' : 'post-zagadka-opredelite-storony-sveta-po-fotografii-priz-10-zolotykh', 
+ 'body' : '@@ -468,16 +468,57 @@\n %D0%B8%D1%82%D0%B5 :)%0A%0A\n+### %D0%90%D0%BF%D0%B4. %D0%9E%D1%82 %D0%BE%D0%B4%D0%BD%D0%BE%D0%B3%D0%BE %D0%B0%D0%B2%D1%82%D0%BE%D1%80%D0%B0 - %D0%BE%D0%B4%D0%B8%D0%BD %D0%B2%D0%B0%D1%80%D0%B8%D0%B0%D0%BD%D1%82%0A\n ________\n'}
 ```
 - comment_options
 > example: 
