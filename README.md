@@ -21,8 +21,8 @@ sync_all_tsx.py
 - account_create
 - account_update
 - account_witness_proxy
-example: ```javascript
-{'account': 'penguin-09', 'proxy': 'penguin'}
+> example: 
+```javascript {'account': 'penguin-09', 'proxy': 'penguin'}
 ```
 - account_witness_vote
 - witness_update
@@ -35,7 +35,9 @@ example: ```javascript
 - custom
 - custom_json
 - escrow_transfer  
-> example: {'from': 'xtar', 'sbd_amount': '0.000 GBG', 'json_meta': '', 'escrow_expiration': '2017-02-16T15:04:24', 'steem_amount': '0.001 GOLOS', 'to': 'lisazarova', 'ratification_deadline': '2017-02-16T15:03:24', 'escrow_id': 89083512, 'fee': '0.001 GOLOS', 'agent': 'kosmos'}
+> example: 
+```javascript {'from': 'xtar', 'sbd_amount': '0.000 GBG', 'json_meta': '', 'escrow_expiration': '2017-02-16T15:04:24', 'steem_amount': '0.001 GOLOS', 'to': 'lisazarova', 'ratification_deadline': '2017-02-16T15:03:24', 'escrow_id': 89083512, 'fee': '0.001 GOLOS', 'agent': 'kosmos'} 
+```
 - escrow_approve  
 > example: {'who': 'kosmos', 'from': 'xtar', 'to': 'lisazarova', 'approve': False, 'escrow_id': 89083512, 'agent': 'kosmos'}
 - escrow_dispute  
