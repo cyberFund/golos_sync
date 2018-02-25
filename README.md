@@ -21,6 +21,9 @@ sync_all_tsx.py
 - account_create
 - account_update
 - account_witness_proxy
+> example: ```json
+{'account': 'penguin-09', 'proxy': 'penguin'}
+```
 - account_witness_vote
 - witness_update
 - withdraw_vesting
