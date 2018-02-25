@@ -14,17 +14,18 @@ sync_all_tsx.py
 > example: 
 ```javascript 
 {'allow_curation_rewards': True,
-  'allow_votes': True,
-  'author': 'natka2',
-  'extensions': [],
-  'max_accepted_payout': '1000000.000 GBG',
-  'percent_steem_dollars': 0,
-  'permlink': 'pervyi-den-na-golose-davaite-znakomitsya'}
+ 'allow_votes': True,
+ 'author': 'natka2',
+ 'extensions': [],
+ 'max_accepted_payout': '1000000.000 GBG',
+ 'percent_steem_dollars': 0,
+ 'permlink': 'pervyi-den-na-golose-davaite-znakomitsya'}
 ```
 - delete_comment
 > example: 
 ```javascript 
-{'author': 'dailis', 'permlink': 'testovyi-post'}
+{'author': 'dailis', 
+ 'permlink': 'testovyi-post'}
 ```
 - vote
 > example: 
@@ -74,7 +75,8 @@ sync_all_tsx.py
 - feed_publish
 > example: 
 ```javascript 
-{'exchange_rate': {'base': '0.050 GBG', 'quote': '1.000 GOLOS'}
+{'exchange_rate': {'base': '0.050 GBG', 
+                   'quote': '1.000 GOLOS'}
 ```
 - account_create
 > example: 
@@ -101,25 +103,26 @@ sync_all_tsx.py
 > example: 
 ```javascript 
 {'account': 'chitty',
-   'active': {'account_auths': [],
-              'key_auths': [['GLS8htkt7hnbn98oYs9AwE4h4XcVmRkwB86xA3aB9mMHSZ7Uq78KP',
-                             1]],
-              'weight_threshold': 1},
-   'json_metadata': '{}',
-   'memo_key': 'GLS6SdvWW4FqmsrLEqkS53dkcaqmTYWX7rUzNQAZSiFwpQaxFMxbT',
-   'owner': {'account_auths': [],
-             'key_auths': [['GLS6szWbaKgCBGwg5fcYF8PyqcNkXTZJxbbEcGZETP3FJwMiH1bC5',
+ 'active': {'account_auths': [],
+            'key_auths': [['GLS8htkt7hnbn98oYs9AwE4h4XcVmRkwB86xA3aB9mMHSZ7Uq78KP',
+                           1]],
+            'weight_threshold': 1},
+ 'json_metadata': '{}',
+ 'memo_key': 'GLS6SdvWW4FqmsrLEqkS53dkcaqmTYWX7rUzNQAZSiFwpQaxFMxbT',
+ 'owner': {'account_auths': [],
+           'key_auths': [['GLS6szWbaKgCBGwg5fcYF8PyqcNkXTZJxbbEcGZETP3FJwMiH1bC5',
+                          1]],
+           'weight_threshold': 1},
+ 'posting': {'account_auths': [],
+             'key_auths': [['GLS5UoyiV2imf3xrVabjCqzbTh5Fn4zwjuD2brJdys9LzJXBY8KH8',
                             1]],
-             'weight_threshold': 1},
-   'posting': {'account_auths': [],
-               'key_auths': [['GLS5UoyiV2imf3xrVabjCqzbTh5Fn4zwjuD2brJdys9LzJXBY8KH8',
-                              1]],
-               'weight_threshold': 1}}
+             'weight_threshold': 1}}
 ```
 - account_witness_proxy
 > example: 
 ```javascript 
-{'account': 'penguin-09', 'proxy': 'penguin'}
+{'account': 'penguin-09', 
+ 'proxy': 'penguin'}
 ```
 - account_witness_vote
 > example: 
@@ -140,7 +143,8 @@ sync_all_tsx.py
 - withdraw_vesting
 > example: 
 ```javascript 
-{'account': 'gliten', 'vesting_shares': '50000.000000 GESTS'}
+{'account': 'gliten', 
+ 'vesting_shares': '50000.000000 GESTS'}
 ```
 - set_withdraw_vesting_route
 > example: 
@@ -180,20 +184,45 @@ sync_all_tsx.py
 - escrow_transfer  
 > example: 
 ```javascript 
-{'from': 'xtar', 'sbd_amount': '0.000 GBG', 'json_meta': '', 'escrow_expiration': '2017-02-16T15:04:24', 'steem_amount': '0.001 GOLOS', 'to': 'lisazarova', 'ratification_deadline': '2017-02-16T15:03:24', 'escrow_id': 89083512, 'fee': '0.001 GOLOS', 'agent': 'kosmos'} 
+{'from': 'xtar', 
+ 'sbd_amount': '0.000 GBG', 
+ 'json_meta': '', 
+ 'escrow_expiration': '2017-02-16T15:04:24', 
+ 'steem_amount': '0.001 GOLOS', 
+ 'to': 'lisazarova', 
+ 'ratification_deadline': '2017-02-16T15:03:24', 
+ 'escrow_id': 89083512, 
+ 'fee': '0.001 GOLOS', 
+ 'agent': 'kosmos'} 
 ```
 - escrow_approve  
 > example: 
 ```javascript 
-{'who': 'kosmos', 'from': 'xtar', 'to': 'lisazarova', 'approve': False, 'escrow_id': 89083512, 'agent': 'kosmos'} 
+{'who': 'kosmos', 
+ 'from': 'xtar', 
+ 'to': 'lisazarova', 
+ 'approve': False, 
+ 'escrow_id': 89083512, 
+ 'agent': 'kosmos'} 
 ```
 - escrow_dispute  
 > example: 
 ```javascript 
-{'who': 'xtar', 'from': 'xtar', 'to': 'lisazarova', 'escrow_id': 75654131, 'agent': 'kosmos'} 
+{'who': 'xtar', 
+ 'from': 'xtar', 
+ 'to': 'lisazarova', 
+ 'escrow_id': 75654131, 
+ 'agent': 'kosmos'} 
 ```
 - escrow_release  
 > example: 
 ```javascript 
-{'who': 'on0tole', 'from': 'xtar', 'sbd_amount': '0.000 GBG', 'steem_amount': '0.001 GOLOS', 'to': 'kosmos', 'receiver': 'kosmos', 'escrow_id': 59796593, 'agent': 'on0tole'} 
+{'who': 'on0tole', 
+ 'from': 'xtar', 
+ 'sbd_amount': '0.000 GBG', 
+ 'steem_amount': '0.001 GOLOS', 
+ 'to': 'kosmos', 
+ 'receiver': 'kosmos', 
+ 'escrow_id': 59796593, 
+ 'agent': 'on0tole'} 
 ```
