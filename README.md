@@ -24,7 +24,7 @@ sync_all_tsx.py
 - delete_comment
 > example: 
 ```javascript 
-
+{'author': 'dailis', 'permlink': 'testovyi-post'}
 ```
 - vote
 > example: 
@@ -140,7 +140,7 @@ sync_all_tsx.py
 - withdraw_vesting
 > example: 
 ```javascript 
-
+{'account': 'gliten', 'vesting_shares': '50000.000000 GESTS'}
 ```
 - set_withdraw_vesting_route
 > example: 
