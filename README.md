@@ -37,7 +37,7 @@ sync_all_tsx.py
 - custom_json
 - escrow_transfer  
 > example: 
-```javascript 
+```json 
 {'from': 'xtar', 'sbd_amount': '0.000 GBG', 'json_meta': '', 'escrow_expiration': '2017-02-16T15:04:24', 'steem_amount': '0.001 GOLOS', 'to': 'lisazarova', 'ratification_deadline': '2017-02-16T15:03:24', 'escrow_id': 89083512, 'fee': '0.001 GOLOS', 'agent': 'kosmos'} 
 ```
 - escrow_approve  
