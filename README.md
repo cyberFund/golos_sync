@@ -40,7 +40,14 @@ sync_all_tsx.py
 - pow
 > example: 
 ```javascript 
-
+{'props': {'account_creation_fee': '0.001 GOLOS', 
+           'maximum_block_size': NumberInt(131072), 
+           'sbd_interest_rate': NumberInt(1000)}, 
+ 'work': [NumberInt(0), 
+          {'input': {'nonce': '5943031280727640119', 
+                     'prev_block': '00000042de39aa258191cec02d446d95e8b61e4a', 
+                     'worker_account': 'ij80'}, 
+           'pow_summary' : NumberLong(4168836458)}]}
 ```
 - pow2
 > example: 
@@ -226,3 +233,10 @@ sync_all_tsx.py
  'escrow_id': 59796593, 
  'agent': 'on0tole'} 
 ```
+- reblog
+> example: 
+```javascript 
+{'account': 'christoryan',
+ 'permlink': 'vydvigaem-pfunk-v-delegaty-golosa', 
+ 'author': 'pfunk'}
+ ```
