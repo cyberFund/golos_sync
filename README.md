@@ -102,6 +102,21 @@ sync_all_tsx.py
 ```javascript 
 
 ```
+- block2
+> example: 
+```javascript 
+
+```
+- cancel_transfer_from_savings
+> example: 
+```javascript 
+
+```
+- change_recovery_accounts
+> example: 
+```javascript 
+
+```
 - comment
 > example: 
 ```javascript 
@@ -150,20 +165,6 @@ sync_all_tsx.py
 {'author': 'dailis', 
  'permlink': 'testovyi-post'}
 ```
-- escrow_transfer  
-> example: 
-```javascript 
-{'from': 'xtar', 
- 'sbd_amount': '0.000 GBG', 
- 'json_meta': '', 
- 'escrow_expiration': '2017-02-16T15:04:24', 
- 'steem_amount': '0.001 GOLOS', 
- 'to': 'lisazarova', 
- 'ratification_deadline': '2017-02-16T15:03:24', 
- 'escrow_id': 89083512, 
- 'fee': '0.001 GOLOS', 
- 'agent': 'kosmos'} 
-```
 - escrow_approve  
 > example: 
 ```javascript 
@@ -195,16 +196,40 @@ sync_all_tsx.py
  'escrow_id': 59796593, 
  'agent': 'on0tole'} 
 ```
-- fill_vesting_withdraw
+- escrow_transfer  
 > example: 
 ```javascript 
-
+{'from': 'xtar', 
+ 'sbd_amount': '0.000 GBG', 
+ 'json_meta': '', 
+ 'escrow_expiration': '2017-02-16T15:04:24', 
+ 'steem_amount': '0.001 GOLOS', 
+ 'to': 'lisazarova', 
+ 'ratification_deadline': '2017-02-16T15:03:24', 
+ 'escrow_id': 89083512, 
+ 'fee': '0.001 GOLOS', 
+ 'agent': 'kosmos'} 
 ```
 - feed_publish
 > example: 
 ```javascript 
 {'exchange_rate': {'base': '0.050 GBG', 
                    'quote': '1.000 GOLOS'}
+```
+- follow
+> example: 
+```javascript 
+
+```
+- fill_vesting_withdraw
+> example: 
+```javascript 
+
+```
+- limit_order_cancel
+> example: 
+```javascript 
+
 ```
 - limit_order_create
 > example: 
@@ -233,6 +258,28 @@ sync_all_tsx.py
 ```javascript 
 
 ```
+- reblog
+> example: 
+```javascript 
+{'account': 'christoryan',
+ 'permlink': 'vydvigaem-pfunk-v-delegaty-golosa', 
+ 'author': 'pfunk'}
+ ```
+ - recover_account
+> example: 
+```javascript 
+
+```
+ - recover_account_recovery
+> example: 
+```javascript 
+
+```
+- set_withdraw_vesting_route
+> example: 
+```javascript 
+
+```
 - transfer
 > example: 
 ```javascript 
@@ -241,18 +288,6 @@ sync_all_tsx.py
  'type': 'GOLOS', 
  'amount': 0.001, 
  'to': 'primus'}
-```
-- reblog
-> example: 
-```javascript 
-{'account': 'christoryan',
- 'permlink': 'vydvigaem-pfunk-v-delegaty-golosa', 
- 'author': 'pfunk'}
- ```
-- set_withdraw_vesting_route
-> example: 
-```javascript 
-
 ```
 - transfer_from_savings
 > example: 
@@ -273,6 +308,11 @@ sync_all_tsx.py
 ```javascript 
 
 ```
+ - vesting_deposit
+> example: 
+```javascript 
+
+```
 - vote
 > example: 
 ```javascript 
@@ -280,6 +320,17 @@ sync_all_tsx.py
  "permlink": "post-zagadka-opredelite-storony-sveta-po-fotografii-priz-10-zolotykh", 
  "voter": "karton", 
  "author": "antonkostroma"}
+```
+ - withdraw_vesting
+> example: 
+```javascript 
+{'account': 'gliten', 
+ 'vesting_shares': '50000.000000 GESTS'}
+```
+ - withdraw_vesting_route
+> example: 
+```javascript 
+
 ```
 - witness_update
 > example: 
@@ -292,9 +343,8 @@ sync_all_tsx.py
            'sbd_interest_rate': 1000},
  'url': 'https://stm/witness-category/@dark.sun'}
 ```
-- withdraw_vesting
+- witness_vote
 > example: 
 ```javascript 
-{'account': 'gliten', 
- 'vesting_shares': '50000.000000 GESTS'}
+
 ```
