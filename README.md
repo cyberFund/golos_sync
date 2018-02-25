@@ -46,99 +46,6 @@ sync_all_tsx.py
  'witness': 'pfunk'}
 ```
 ## Operations in Golos
-- comment
-> example: 
-```javascript 
-{'parent_permlink': 'ru--konkurs', 
- 'json_metadata' : '{\'tags\':[\'ru--konkurs\',\'ru--foto\',\'ru--fotografiya\',\'ru--golos\'],\'image\':[\'http://i.imgur.com/QGuqzox.jpg\'],\'links\':[\'http://i.imgur.com/QGuqzox.jpg\',\'https://golos.io/@antonkostroma\'],\'app\':\'steemit/0.1\',\'format\':\'markdown\'}', 
- 'author' : 'antonkostroma', 
- 'parent_author' : '', 
- 'title' : 'Пост-загадка. Определите стороны света по фотографии. Приз 10 золотых.', 
- 'permlink' : 'post-zagadka-opredelite-storony-sveta-po-fotografii-priz-10-zolotykh', 
- 'body' : '@@ -468,16 +468,57 @@\n %D0%B8%D1%82%D0%B5 :)%0A%0A\n+### %D0%90%D0%BF%D0%B4. %D0%9E%D1%82 %D0%BE%D0%B4%D0%BD%D0%BE%D0%B3%D0%BE %D0%B0%D0%B2%D1%82%D0%BE%D1%80%D0%B0 - %D0%BE%D0%B4%D0%B8%D0%BD %D0%B2%D0%B0%D1%80%D0%B8%D0%B0%D0%BD%D1%82%0A\n ________\n'}
-```
-- comment_options
-> example: 
-```javascript 
-{'allow_curation_rewards': True,
- 'allow_votes': True,
- 'author': 'natka2',
- 'extensions': [],
- 'max_accepted_payout': '1000000.000 GBG',
- 'percent_steem_dollars': 0,
- 'permlink': 'pervyi-den-na-golose-davaite-znakomitsya'}
-```
-- delete_comment
-> example: 
-```javascript 
-{'author': 'dailis', 
- 'permlink': 'testovyi-post'}
-```
-- vote
-> example: 
-```javascript 
-{"weight": NumberInt(10000), 
- "permlink": "post-zagadka-opredelite-storony-sveta-po-fotografii-priz-10-zolotykh", 
- "voter": "karton", 
- "author": "antonkostroma"}
-```
-- convert
-> example: 
-```javascript 
-
-```
-- pow
-> example: 
-```javascript 
-{'props': {'account_creation_fee': '0.001 GOLOS', 
-           'maximum_block_size': NumberInt(131072), 
-           'sbd_interest_rate': NumberInt(1000)}, 
- 'work': [NumberInt(0), 
-          {'input': {'nonce': '5943031280727640119', 
-                     'prev_block': '00000042de39aa258191cec02d446d95e8b61e4a', 
-                     'worker_account': 'ij80'}, 
-           'pow_summary' : NumberLong(4168836458)}]}
-```
-- pow2
-> example: 
-```javascript 
-
-```
-- transfer
-> example: 
-```javascript 
-{'from': 'phenom', 
- 'memo': 'You have been mentioned by on0tole in the post http://golos.io/ru--delegaty/@on0tole/predstavlyayu-skript-dlya-avtomaticheskogo-obnovleniya-price-feed-dlya-delegatov', 
- 'type': 'GOLOS', 
- 'amount': 0.001, 
- 'to': 'primus'}
-```
-- curation_reward
-> example: 
-```javascript 
-
-```
-- author_reward
-> example: 
-```javascript 
-
-```
-- transfer_to_vesting
-> example: 
-```javascript 
-
-```
-- fill_vesting_withdraw
-> example: 
-```javascript 
-
-```
-- feed_publish
-> example: 
-```javascript 
-{'exchange_rate': {'base': '0.050 GBG', 
-                   'quote': '1.000 GOLOS'}
-```
 - account_create
 > example: 
 ```javascript 
@@ -190,48 +97,39 @@ sync_all_tsx.py
 ```javascript 
 
 ```
-- witness_update
-> example: 
-```javascript 
-{'block_signing_key': 'GLS6DpEiFL9wUCcU5i1px32bg3JRfuj6b2cAQJDe6LXEAEau3h4Hu',
- 'fee': '0.000 GOLOS',
- 'owner': 'dark.sun',
- 'props': {'account_creation_fee': '3.000 GOLOS',
-           'maximum_block_size': 65536,
-           'sbd_interest_rate': 1000},
- 'url': 'https://stm/witness-category/@dark.sun'}
-```
-- withdraw_vesting
-> example: 
-```javascript 
-{'account': 'gliten', 
- 'vesting_shares': '50000.000000 GESTS'}
-```
-- set_withdraw_vesting_route
+- author_reward
 > example: 
 ```javascript 
 
 ```
-- limit_order_create
+- comment
+> example: 
+```javascript 
+{'parent_permlink': 'ru--konkurs', 
+ 'json_metadata' : '{\'tags\':[\'ru--konkurs\',\'ru--foto\',\'ru--fotografiya\',\'ru--golos\'],\'image\':[\'http://i.imgur.com/QGuqzox.jpg\'],\'links\':[\'http://i.imgur.com/QGuqzox.jpg\',\'https://golos.io/@antonkostroma\'],\'app\':\'steemit/0.1\',\'format\':\'markdown\'}', 
+ 'author' : 'antonkostroma', 
+ 'parent_author' : '', 
+ 'title' : 'Пост-загадка. Определите стороны света по фотографии. Приз 10 золотых.', 
+ 'permlink' : 'post-zagadka-opredelite-storony-sveta-po-fotografii-priz-10-zolotykh', 
+ 'body' : '@@ -468,16 +468,57 @@\n %D0%B8%D1%82%D0%B5 :)%0A%0A\n+### %D0%90%D0%BF%D0%B4. %D0%9E%D1%82 %D0%BE%D0%B4%D0%BD%D0%BE%D0%B3%D0%BE %D0%B0%D0%B2%D1%82%D0%BE%D1%80%D0%B0 - %D0%BE%D0%B4%D0%B8%D0%BD %D0%B2%D0%B0%D1%80%D0%B8%D0%B0%D0%BD%D1%82%0A\n ________\n'}
+```
+- comment_options
+> example: 
+```javascript 
+{'allow_curation_rewards': True,
+ 'allow_votes': True,
+ 'author': 'natka2',
+ 'extensions': [],
+ 'max_accepted_payout': '1000000.000 GBG',
+ 'percent_steem_dollars': 0,
+ 'permlink': 'pervyi-den-na-golose-davaite-znakomitsya'}
+```
+- convert
 > example: 
 ```javascript 
 
 ```
-- limit_order_create2
-> example: 
-```javascript 
-
-```
-- transfer_from_savings
-> example: 
-```javascript 
-{'request_id': NumberInt(1489186057), 
- 'from': 'oxygendependant', 
- 'to': 'oxygendependant', 
- 'amount': '7480.680 GOLOS', 
- 'memo': ''}
-```
-- transfer_to_savings
+- curation_reward
 > example: 
 ```javascript 
 
@@ -245,6 +143,12 @@ sync_all_tsx.py
 > example: 
 ```javascript 
 
+```
+- delete_comment
+> example: 
+```javascript 
+{'author': 'dailis', 
+ 'permlink': 'testovyi-post'}
 ```
 - escrow_transfer  
 > example: 
@@ -291,6 +195,53 @@ sync_all_tsx.py
  'escrow_id': 59796593, 
  'agent': 'on0tole'} 
 ```
+- fill_vesting_withdraw
+> example: 
+```javascript 
+
+```
+- feed_publish
+> example: 
+```javascript 
+{'exchange_rate': {'base': '0.050 GBG', 
+                   'quote': '1.000 GOLOS'}
+```
+- limit_order_create
+> example: 
+```javascript 
+
+```
+- limit_order_create2
+> example: 
+```javascript 
+
+```
+- pow
+> example: 
+```javascript 
+{'props': {'account_creation_fee': '0.001 GOLOS', 
+           'maximum_block_size': NumberInt(131072), 
+           'sbd_interest_rate': NumberInt(1000)}, 
+ 'work': [NumberInt(0), 
+          {'input': {'nonce': '5943031280727640119', 
+                     'prev_block': '00000042de39aa258191cec02d446d95e8b61e4a', 
+                     'worker_account': 'ij80'}, 
+           'pow_summary' : NumberLong(4168836458)}]}
+```
+- pow2
+> example: 
+```javascript 
+
+```
+- transfer
+> example: 
+```javascript 
+{'from': 'phenom', 
+ 'memo': 'You have been mentioned by on0tole in the post http://golos.io/ru--delegaty/@on0tole/predstavlyayu-skript-dlya-avtomaticheskogo-obnovleniya-price-feed-dlya-delegatov', 
+ 'type': 'GOLOS', 
+ 'amount': 0.001, 
+ 'to': 'primus'}
+```
 - reblog
 > example: 
 ```javascript 
@@ -298,3 +249,52 @@ sync_all_tsx.py
  'permlink': 'vydvigaem-pfunk-v-delegaty-golosa', 
  'author': 'pfunk'}
  ```
+- set_withdraw_vesting_route
+> example: 
+```javascript 
+
+```
+- transfer_from_savings
+> example: 
+```javascript 
+{'request_id': NumberInt(1489186057), 
+ 'from': 'oxygendependant', 
+ 'to': 'oxygendependant', 
+ 'amount': '7480.680 GOLOS', 
+ 'memo': ''}
+```
+- transfer_to_savings
+> example: 
+```javascript 
+
+```
+- transfer_to_vesting
+> example: 
+```javascript 
+
+```
+- vote
+> example: 
+```javascript 
+{"weight": NumberInt(10000), 
+ "permlink": "post-zagadka-opredelite-storony-sveta-po-fotografii-priz-10-zolotykh", 
+ "voter": "karton", 
+ "author": "antonkostroma"}
+```
+- witness_update
+> example: 
+```javascript 
+{'block_signing_key': 'GLS6DpEiFL9wUCcU5i1px32bg3JRfuj6b2cAQJDe6LXEAEau3h4Hu',
+ 'fee': '0.000 GOLOS',
+ 'owner': 'dark.sun',
+ 'props': {'account_creation_fee': '3.000 GOLOS',
+           'maximum_block_size': 65536,
+           'sbd_interest_rate': 1000},
+ 'url': 'https://stm/witness-category/@dark.sun'}
+```
+- withdraw_vesting
+> example: 
+```javascript 
+{'account': 'gliten', 
+ 'vesting_shares': '50000.000000 GESTS'}
+```
