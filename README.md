@@ -36,7 +36,10 @@ sync_all_tsx.py
 - vote
 > example: 
 ```javascript 
-
+{"weight": NumberInt(10000), 
+ "permlink": "post-zagadka-opredelite-storony-sveta-po-fotografii-priz-10-zolotykh", 
+ "voter": "karton", 
+ "author": "antonkostroma"}
 ```
 - convert
 > example: 
