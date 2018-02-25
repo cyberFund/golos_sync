@@ -21,7 +21,7 @@ sync_all_tsx.py
 - account_create
 - account_update
 - account_witness_proxy
-> example: ```javascript
+example: ```javascript
 {'account': 'penguin-09', 'proxy': 'penguin'}
 ```
 - account_witness_vote
