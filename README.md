@@ -107,7 +107,11 @@ sync_all_tsx.py
 - transfer
 > example: 
 ```javascript 
-
+{'from': 'phenom', 
+ 'memo': 'You have been mentioned by on0tole in the post http://golos.io/ru--delegaty/@on0tole/predstavlyayu-skript-dlya-avtomaticheskogo-obnovleniya-price-feed-dlya-delegatov', 
+ 'type': 'GOLOS', 
+ 'amount': 0.001, 
+ 'to': 'primus'}
 ```
 - curation_reward
 > example: 
@@ -221,7 +225,11 @@ sync_all_tsx.py
 - transfer_from_savings
 > example: 
 ```javascript 
-
+{'request_id': NumberInt(1489186057), 
+ 'from': 'oxygendependant', 
+ 'to': 'oxygendependant', 
+ 'amount': '7480.680 GOLOS', 
+ 'memo': ''}
 ```
 - transfer_to_savings
 > example: 
