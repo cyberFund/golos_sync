@@ -11,6 +11,7 @@ import numpy as np
 from celery import Celery
 from time import sleep
 from utils import get_connectors
+import click
 
 MAX_BLOCKS_PER_TASK = 10000
 MIN_BLOCKS_PER_TASK = 10
@@ -36,8 +37,11 @@ def sync_tsx(mongo_database, blocks):
     process_block(connector, block, block_number)
   sys.stdout.flush()
 
-if __name__ == '__main__':
-  rpc, connector = get_connectors(sys.argv[1])
+@click.command()
+@click.option('--connector', help='Type of connector (mongo/elasticsearch).', default='mongo')
+@click.option('--database', help='Name of database', default='golos_transactions')
+def sync_all_tsx(connector, database):
+  rpc, connector = get_connectors(database, connector)
   config = rpc.get_config()
   block_interval = config["STEEMIT_BLOCK_INTERVAL"]
   last_block = connector.find_last_block()
@@ -52,6 +56,6 @@ if __name__ == '__main__':
 
     new_blocks = list(range(last_block, current_block))
     for chunk in tqdm(np.array_split(new_blocks, round((current_block - last_block) / BLOCKS_PER_TASK))):
-      sync_tsx.delay(sys.argv[1], chunk.tolist())
+      sync_tsx.delay(database, chunk.tolist())
     connector.update_last_block(current_block)
     last_block = current_block
