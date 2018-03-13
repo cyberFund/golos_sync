@@ -1,7 +1,12 @@
 from connectors import MongoConnector
 from pistonapi.steemnoderpc import SteemNodeRPC
 
-def get_connectors(mongo_database):
+connectors = {
+  'mongo': MongoConnector,
+  'elasticsearch': ElasticConnector
+}
+
+def get_connectors(database, connector_type='mongo'):
   rpc = SteemNodeRPC("wss://api.golos.cf", apis=["follow", "database"])
-  connector = MongoConnector(database=mongo_database)
+  connector = connectors[connector_type](database)
   return rpc, connector
