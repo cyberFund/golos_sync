@@ -1,8 +1,8 @@
 from datetime import datetime
 import pdb
 import json
-from comments import NeedUpdateComment
-from accounts import NeedUpdateAccount
+# from comments import NeedUpdateComment
+# from accounts import NeedUpdateAccount
 
 def create_block(block_id, block, operation_type, operation):
   if operation_type in operations_blocks.keys():
@@ -232,6 +232,15 @@ class RecoverAccountBlock(Block):
 class ChangeRecoveryAccountBlock(Block):  
   fields_to_id = ['account_to_recover']  
 
+class VestingDepositBlock(Block):  
+  pass
+
+class WithdrawVestingRouteBlock(Block):  
+  pass
+
+class WitnessVoteBlock(Block):  
+  pass
+
 class OtherBlock(Block):
   def __init__(self, block_id, block, operation_type, operation):
     super().__init__(block_id, block, operation_type, operation)
@@ -274,4 +283,7 @@ operations_blocks = {
   "request_account_recovery": RequestAccountRecoveryBlock,
   "recover_account": RecoverAccountBlock,
   "change_recovery_account": ChangeRecoveryAccountBlock,
+  'vesting_deposit': VestingDepositBlock,
+  'withdraw_vesting_route': WithdrawVestingRouteBlock,
+  'witness_vote': WitnessVoteBlock
 }
