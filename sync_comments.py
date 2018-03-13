@@ -9,6 +9,7 @@ from tqdm import tqdm
 from comments import UpdatedComment
 from utils import get_connectors
 from celery import Celery
+import click
 
 MAX_COMMENTS_PER_TASK = 1000
 MIN_COMMENTS_PER_TASK = 1
@@ -23,7 +24,10 @@ def sync_comments(mongo_database, comments):
     comment_object = UpdatedComment(comment)
     connector.save_instance(comment_object)
 
-if __name__ == '__main__':
+@click.command()
+@click.option('--connector', help='Type of connector (mongo/elasticsearch).', default='mongo')
+@click.option('--database', help='Name of database', default='golos_transactions')
+def sync_all_comments(connector, database)
   rpc, connector = get_connectors(sys.argv[1])
   config = rpc.get_config()
   block_interval = config["STEEMIT_BLOCK_INTERVAL"]
@@ -42,3 +46,6 @@ if __name__ == '__main__':
         task_comments = []
     if len(task_comments):
       sync_comments.delay(sys.argv[1], task_comments)
+
+if __name__ == '__main__':
+  sync_all_comments()

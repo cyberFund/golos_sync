@@ -9,6 +9,7 @@ from tqdm import tqdm
 from accounts import UpdatedAccount
 from utils import get_connectors
 from celery import Celery
+import click
 
 MAX_ACCOUNTS_PER_TASK = 1000
 MIN_ACCOUNTS_PER_TASK = 1
@@ -23,7 +24,10 @@ def sync_accounts(mongo_database, accounts):
     account_object = UpdatedAccount(account)
     connector.save_instance(account_object)
 
-if __name__ == '__main__':
+@click.command()
+@click.option('--connector', help='Type of connector (mongo/elasticsearch).', default='mongo')
+@click.option('--database', help='Name of database', default='golos_transactions')
+def sync_all_accounts(connector, database)
   rpc, connector = get_connectors(sys.argv[1])
   config = rpc.get_config()
   block_interval = config["STEEMIT_BLOCK_INTERVAL"]
@@ -42,3 +46,6 @@ if __name__ == '__main__':
         task_accounts = []
     if len(task_accounts):
       sync_accounts.delay(sys.argv[1], task_accounts)
+
+if __name__ == '__main__':
+  sync_all_accounts()

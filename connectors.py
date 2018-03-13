@@ -57,7 +57,7 @@ class MongoConnector(Connector):
     self.database[collection].update({'_id': instance_id}, {"$set": dictionary}, upsert=True)
 
   def get_instances_to_update(self, collection):
-    return self.database[collection].find({'need_update': True})
+    return list(self.database[collection].find({'need_update': True}))
 
 class ElasticConnector(Connector):
   def __init__(self, index, host='http://localhost:9200/'):
