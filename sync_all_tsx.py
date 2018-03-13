@@ -51,7 +51,7 @@ if __name__ == '__main__':
       blocks_per_task = max(blocks_per_task / 10, MIN_BLOCKS_PER_TASK)
 
     new_blocks = list(range(last_block, current_block))
-    for chunk in tqdm(np.array_split(new_blocks, round((current_block - last_block) / BLOCKS_PER_TASK))):
+    for chunk in tqdm(np.array_split(new_blocks, round((current_block - last_block) / blocks_per_task))):
       sync_tsx.delay(sys.argv[1], chunk.tolist())
     connector.update_last_block(current_block)
     last_block = current_block
