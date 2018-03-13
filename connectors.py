@@ -98,12 +98,5 @@ class ElasticConnector(Connector):
     self.update_by_query(collection, query, block)
 
   def get_instances_to_update(self, collection):
-    query = {
-      "query": {
-        "term" : {
-          "need_update" : True
-        }
-      }
-    }
-    hits = self.client.search(query, index=self.index, doc_type=collection)['hits']['hits']
+    hits = self.client.search("need_update:true", index=self.index, doc_type=collection)['hits']['hits']
     return [hit['_source'] for hit in hits]
