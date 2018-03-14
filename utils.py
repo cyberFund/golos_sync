@@ -1,4 +1,4 @@
-from connectors import MongoConnector
+from connectors import MongoConnector, ElasticConnector
 from pistonapi.steemnoderpc import SteemNodeRPC
 
 connectors = {

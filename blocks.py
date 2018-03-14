@@ -1,8 +1,8 @@
 from datetime import datetime
 import pdb
 import json
-# from comments import NeedUpdateComment
-# from accounts import NeedUpdateAccount
+from comments import NeedUpdateComment
+from accounts import NeedUpdateAccount
 
 def create_block(block_id, block, operation_type, operation):
   if operation_type in operations_blocks.keys():
