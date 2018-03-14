@@ -43,9 +43,11 @@ def sync_all_comments(connector, database)
       task_comments.append(comment)
       if len(task_comments) >= comments_per_task:
         sync_comments.delay(sys.argv[1], task_comments)
+        connector.update_instances('comments', task_comments)
         task_comments = []
     if len(task_comments):
       sync_comments.delay(sys.argv[1], task_comments)
+      connector.update_instances('comments', task_comments)
 
 if __name__ == '__main__':
   sync_all_comments()
