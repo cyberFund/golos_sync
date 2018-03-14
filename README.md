@@ -18,7 +18,7 @@ $ celery -A sync_all_tsx worker
 $ celery -A sync_comments worker
 $ celery -A sync_accounts worker
 ```
-## Watch everything
+Watch everything
 ```bash
 $ celery flower
 ```
