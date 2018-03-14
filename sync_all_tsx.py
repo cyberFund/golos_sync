@@ -59,3 +59,7 @@ def sync_all_tsx(connector, database):
       sync_tsx.delay(sys.argv[1], chunk.tolist())
     connector.update_last_block(current_block)
     last_block = current_block
+
+if __name__ == '__main__':
+    sync_all_tsx()
+
