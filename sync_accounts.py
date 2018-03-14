@@ -44,10 +44,10 @@ def sync_all_accounts(connector, database):
       task_accounts.append(account)
       if len(task_accounts) >= accounts_per_task:
         sync_accounts.delay(database, task_accounts)
-        connector.update_instances('comments', task_accounts)
+        connector.update_instances('account', task_accounts)
         task_accounts = []
     if len(task_accounts):
-      connector.update_instances('comments', task_accounts)
+      connector.update_instances('account', task_accounts)
       sync_accounts.delay(database, task_accounts)
 
 if __name__ == '__main__':

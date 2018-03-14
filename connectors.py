@@ -1,6 +1,7 @@
 from pymongo import MongoClient, ASCENDING
 from pyelasticsearch import ElasticSearch
 from pyelasticsearch.exceptions import ElasticHttpNotFoundError
+import pdb
 
 class Connector:
   def __init__(self):
@@ -64,7 +65,7 @@ class MongoConnector(Connector):
 
   def update_instances(self, collection, instances):
     for instance in instances:
-      self.database[collection].update_one({'_id': instance['_id']}, {'need_update': False})
+      self.database[collection].update_one({'_id': instance['_id']}, {"$set": {'need_update': False}})
 
 class ElasticConnector(Connector):
   def __init__(self, index, host='http://localhost:9200/'):
