@@ -1,9 +1,27 @@
 # Synchronization Golos node to MongoDB
-
-## Synchronization comments
-sync_comments.py
-## Synchronization all operations
-sync_all_tsx.py
+## How to use
+Add tasks to synchronize golos operations
+```bash
+$ sync_all_tsx.py --database DATABASE --connector mongo/elasticsearch
+```
+Add tasks to synchronize golos comments
+```bash
+$ sync_comments.py --database DATABASE --connector mongo/elasticsearch
+```
+Add tasks to synchronize golos accounts
+```bash
+$ sync_accounts.py --database DATABASE --connector mongo/elasticsearch
+```
+Run celery workers
+```bash
+$ celery -A sync_all_tsx worker
+$ celery -A sync_comments worker
+$ celery -A sync_accounts worker
+```
+## Watch everything
+```bash
+$ celery flower
+```
 ## Block structure
 > example: 
 ```javascript 
