@@ -22,6 +22,10 @@ Watch everything
 ```bash
 $ celery flower
 ```
+# Architecture
+
+Synchronization Golos architecture: ![Synchronization Golos architecture](synchronization_golos_architecture.png)
+
 ## Block structure
 > example: 
 ```javascript 
