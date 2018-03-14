@@ -21,6 +21,9 @@ class Connector:
   def get_instances_to_update(self, collection):
     pass
 
+  def update_instances(self, collection, instances):
+    pass
+
 class MongoConnector(Connector):
   def __init__(self, database, host="localhost:27017"):
     self.client = MongoClient(host)
@@ -58,6 +61,10 @@ class MongoConnector(Connector):
 
   def get_instances_to_update(self, collection):
     return list(self.database[collection].find({'need_update': True}))
+
+  def update_instances(self, collection, instances):
+    for instance in instances:
+      self.database[collection].update_one({'_id': instance['_id']}, {'need_update': False})
 
 class ElasticConnector(Connector):
   def __init__(self, index, host='http://localhost:9200/'):
@@ -100,3 +107,7 @@ class ElasticConnector(Connector):
   def get_instances_to_update(self, collection):
     hits = self.client.search("need_update:true", index=self.index, doc_type=collection)['hits']['hits']
     return [hit['_source'] for hit in hits]
+
+  def update_instances(self, collection, instances):
+    for instance in instances:
+      self.client.index(self.index, collection, {'need_update': False}, id=instance['_id'])
