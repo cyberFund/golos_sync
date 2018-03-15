@@ -123,28 +123,18 @@ Synchronization Golos architecture: ![Synchronization Golos architecture](synchr
 	"approve" : true
 }
 ```
-- author_reward
-> example: 
-```javascript 
-
-```
-- block2
-> example: 
-```javascript 
-
-```
 - cancel_transfer_from_savings
 > example: 
 ```javascript 
-{
-	"from" : "whynobody",
-	"request_id" : 1488715520
-}
+{"from" : "whynobody",
+ "request_id" : 1488715520}
 ```
 - change_recovery_accounts
 > example: 
 ```javascript 
-
+{"new_recovery_account" : "cryptostorm", 
+ "account_to_recover" : "goldvoice", 
+ "extensions" : [ ]}
 ```
 - comment
 > example: 
@@ -329,21 +319,13 @@ Synchronization Golos architecture: ![Synchronization Golos architecture](synchr
  - recover_account_recovery
 > example: 
 ```javascript 
-{ 
-    "account_to_recover" : "konstantinus", 
-    "new_owner_authority" : {
-        "key_auths" : [
-            [
-                "GLS81MSdWsPQuKfqzDJ1Kb3TMgL3Qv7WVYt52YW9ptKFB5z7vaaCw", 
-                NumberInt(1)
-            ]
-        ], 
-        "weight_threshold" : NumberInt(1), 
-        "account_auths" : [ ]
-    }, 
-    "recovery_account" : "golosio", 
-    "extensions" : [ ]
-}
+{"account_to_recover" : "konstantinus", 
+ "new_owner_authority" : {"key_auths" : [["GLS81MSdWsPQuKfqzDJ1Kb3TMgL3Qv7WVYt52YW9ptKFB5z7vaaCw", 
+                                          NumberInt(1)]], 
+                          "weight_threshold" : NumberInt(1), 
+                          "account_auths" : [ ]}, 
+ "recovery_account" : "golosio", 
+ "extensions" : [ ]}
 ```
 - set_withdraw_vesting_route
 > example: 
