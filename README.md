@@ -117,7 +117,11 @@ Synchronization Golos architecture: ![Synchronization Golos architecture](synchr
 - account_witness_vote
 > example: 
 ```javascript 
-
+{
+	"witness" : "phenom",
+	"account" : "phenom",
+	"approve" : true
+}
 ```
 - author_reward
 > example: 
@@ -132,7 +136,10 @@ Synchronization Golos architecture: ![Synchronization Golos architecture](synchr
 - cancel_transfer_from_savings
 > example: 
 ```javascript 
-
+{
+	"from" : "whynobody",
+	"request_id" : 1488715520
+}
 ```
 - change_recovery_accounts
 > example: 
@@ -164,7 +171,12 @@ Synchronization Golos architecture: ![Synchronization Golos architecture](synchr
 - convert
 > example: 
 ```javascript 
-
+{
+	"amount" : 4.28,
+	"owner" : "forvard80",
+	"requestid" : 1484479381,
+ "type": "GBG"
+}
 ```
 - curation_reward
 > example: 
@@ -174,6 +186,13 @@ Synchronization Golos architecture: ![Synchronization Golos architecture](synchr
 - custom
 > example: 
 ```javascript 
+{
+	"id" : 777,
+	"data" : "07686970737465720a6c697476696e7465636803ec24cba7c357cb1a8237d3a16929a4b3bf892a7df73d603765b55d5f60934bdb022548eafe1a131ca63148b5e563e65470e75be11a1171a56fd5f6b132fbd2c213d9204674de4005007d7e8e393064c1098e37ecc5c1ff7b9ec1f484506da2178fb67111e7c496aaa708a0ee8f2daaebfadacefa65a3dc0edb9af35d9d11",
+	"required_auths" : [
+		"hipster"
+	]
+}
 
 ```
 - custom_json
@@ -241,7 +260,13 @@ Synchronization Golos architecture: ![Synchronization Golos architecture](synchr
 - follow
 > example: 
 ```javascript 
-
+{
+	"follower" : "villainblack",
+	"following" : "imag1ne",
+	"what" : [
+		"blog"
+	]
+}
 ```
 - fill_vesting_withdraw
 > example: 
@@ -251,16 +276,37 @@ Synchronization Golos architecture: ![Synchronization Golos architecture](synchr
 - limit_order_cancel
 > example: 
 ```javascript 
-
+{
+	"orderid" : 1,
+	"owner" : "batman"
+}
 ```
 - limit_order_create
 > example: 
 ```javascript 
-
+{
+	"amount_to_sell" : "0.035 GOLOS",
+	"orderid" : 1,
+	"min_to_receive" : "0.350 GBG",
+	"owner" : "primus",
+	"expiration" : "1927-09-05T07:31:29",
+	"fill_or_kill" : false,
+}
 ```
 - limit_order_create2
 > example: 
 ```javascript 
+{
+	"amount_to_sell" : "0.409 GBG",
+	"orderid" : 80397733,
+	"owner" : "bopox",
+	"exchange_rate" : {
+		"base" : "0.409 GBG",
+		"quote" : "1.365 GOLOS"
+	},
+	"expiration" : "2017-04-15T18:20:07",
+	"fill_or_kill" : false,
+}
 
 ```
 - pow
@@ -290,7 +336,30 @@ Synchronization Golos architecture: ![Synchronization Golos architecture](synchr
  - recover_account
 > example: 
 ```javascript 
-
+{
+	"account_to_recover" : "amikphoto",
+	"new_owner_authority" : {
+		"key_auths" : [
+			[
+				"GLS59vqaK4vCntf9YwpUpqE9Y6Wv66JjvRdXSiNoDknnDY6ALmSFi",
+				1
+			]
+		],
+		"weight_threshold" : 1,
+		"account_auths" : [ ]
+	},
+	"recent_owner_authority" : {
+		"key_auths" : [
+			[
+				"GLS7EfpTQYuELUHhp1PLcxiqnhpoHo6R9iAtpTuv7R9KWydRK4WAA",
+				1
+			]
+		],
+		"weight_threshold" : 1,
+		"account_auths" : [ ]
+	},
+	"extensions" : [ ]
+}
 ```
  - recover_account_recovery
 > example: 
@@ -300,7 +369,12 @@ Synchronization Golos architecture: ![Synchronization Golos architecture](synchr
 - set_withdraw_vesting_route
 > example: 
 ```javascript 
-
+{
+	"auto_vest" : true,
+	"from_account" : "ij80",
+	"percent" : 10000,
+	"to_account" : "jesta"
+}
 ```
 - transfer
 > example: 
@@ -323,12 +397,21 @@ Synchronization Golos architecture: ![Synchronization Golos architecture](synchr
 - transfer_to_savings
 > example: 
 ```javascript 
-
+{
+	"from" : "hipster",
+	"to" : "hipster",
+	"memo" : "",
+	"amount" : "1.000 GOLOS"
+}
 ```
 - transfer_to_vesting
 > example: 
 ```javascript 
-
+{
+	"from" : "egorsv",
+	"to" : "smooth.witness",
+	"amount" : 1
+}
 ```
  - vesting_deposit
 > example: 
