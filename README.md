@@ -117,11 +117,9 @@ Synchronization Golos architecture: ![Synchronization Golos architecture](synchr
 - account_witness_vote
 > example: 
 ```javascript 
-{
-	"witness" : "phenom",
-	"account" : "phenom",
-	"approve" : true
-}
+{"witness" : "phenom",
+ "account" : "phenom",
+ "approve" : true}
 ```
 - cancel_transfer_from_savings
 > example: 
