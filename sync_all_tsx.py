@@ -10,7 +10,7 @@ from blocks import create_block
 import numpy as np
 from celery import Celery
 from time import sleep
-from utils import get_connectors
+from utils import get_connectors, restart_on_error
 import click
 
 MAX_BLOCKS_PER_TASK = 1000
@@ -29,6 +29,7 @@ def process_block(connector, block, blockid):
     for opObj in tx['operations']:
       process_op(connector, opObj, block, blockid)
 
+@restart_on_error
 @app.task
 def sync_tsx(mongo_database, blocks):
   rpc, connector = get_connectors(mongo_database)
