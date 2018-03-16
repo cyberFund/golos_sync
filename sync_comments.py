@@ -15,7 +15,7 @@ from time import sleep
 MAX_COMMENTS_PER_TASK = 1000
 MIN_COMMENTS_PER_TASK = 1
 
-app = Celery('sync_comments', broker='redis://localhost:6379')
+app = Celery('sync_comments', broker='redis://localhost:6379/1')
 
 @app.task(base=RestartableTask)
 def sync_comments(mongo_database, comments):
