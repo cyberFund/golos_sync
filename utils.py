@@ -1,5 +1,6 @@
 from connectors import MongoConnector, ElasticConnector
 from pistonapi.steemnoderpc import SteemNodeRPC
+from functools import wraps
 
 connectors = {
   'mongo': MongoConnector,
