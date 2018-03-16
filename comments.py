@@ -22,7 +22,7 @@ class Comment:
     pass
 
   def get_collection(self):
-    return "comment"
+    return "comment_object"
 
 class ParentComment(Comment):
   pass

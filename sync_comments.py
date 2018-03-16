@@ -34,21 +34,21 @@ def sync_all_comments(connector, database):
   block_interval = config["STEEMIT_BLOCK_INTERVAL"]
   while True:
     comments_per_task = MAX_COMMENTS_PER_TASK
-    comments = connector.get_instances_to_update('comment')
+    comments = connector.get_instances_to_update('comment_object')
     while len(comments) < comments_per_task:
       sleep(block_interval)
-      comments = connector.get_instances_to_update('comment')
+      comments = connector.get_instances_to_update('comment_object')
       comments_per_task = max(comments_per_task / 10, MIN_COMMENTS_PER_TASK)
     task_comments = []
     for comment in tqdm(comments):
       task_comments.append(comment)
       if len(task_comments) >= comments_per_task:
         sync_comments.delay(database, task_comments)
-        connector.update_instances('comment', task_comments)
+        connector.update_instances('comment_object', task_comments)
         task_comments = []
     if len(task_comments):
       sync_comments.delay(database, task_comments)
-      connector.update_instances('comment', task_comments)
+      connector.update_instances('comment_object', task_comments)
 
 if __name__ == '__main__':
   sync_all_comments()

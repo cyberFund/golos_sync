@@ -22,7 +22,7 @@ class Account:
     pass
 
   def get_collection(self):
-    return "account"
+    return "account_object"
 
 class NeedUpdateAccount(Account):
   def __init__(self, account):
