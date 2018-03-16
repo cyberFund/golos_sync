@@ -13,7 +13,7 @@ from time import sleep
 from utils import get_connectors
 import click
 
-MAX_BLOCKS_PER_TASK = 10000
+MAX_BLOCKS_PER_TASK = 1000
 MIN_BLOCKS_PER_TASK = 10
 
 app = Celery('sync_all_tsx', broker='redis://localhost:6379')
@@ -56,7 +56,7 @@ def sync_all_tsx(connector, database):
 
     new_blocks = list(range(last_block, current_block))
     for chunk in tqdm(np.array_split(new_blocks, round((current_block - last_block) / blocks_per_task))):
-      sync_tsx.delay(sys.argv[1], chunk.tolist())
+      sync_tsx.delay(database, chunk.tolist())
     connector.update_last_block(current_block)
     last_block = current_block
 
