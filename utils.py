@@ -14,7 +14,7 @@ connectors = {
 }
 
 def get_connectors(database, connector_type='mongo'):
-  rpc = SteemNodeRPC("wss://api.golos.cf", apis=["follow", "database"])
+  rpc = SteemNodeRPC("ws://localhost:8090", apis=["follow", "database"])
   connector = connectors[connector_type](database)
   return rpc, connector
 

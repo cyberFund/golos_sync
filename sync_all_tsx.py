@@ -13,10 +13,10 @@ from time import sleep
 from utils import get_connectors, RestartableTask
 import click
 
-MAX_BLOCKS_PER_TASK = 1000
+MAX_BLOCKS_PER_TASK = 10000
 MIN_BLOCKS_PER_TASK = 10
 
-app = Celery('sync_all_tsx', broker='redis://localhost:6379')
+app = Celery('sync_all_tsx', broker='redis://localhost:6379/0')
 
 def process_op(connector, opObj, block, blockid):
   opType = opObj[0]

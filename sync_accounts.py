@@ -1,4 +1,4 @@
-from datetime import datetime
+[Bfrom datetime import datetime
 from pistonapi.steemnoderpc import SteemNodeRPC
 from connectors import MongoConnector
 from pprint import pprint
@@ -15,7 +15,7 @@ from time import sleep
 MAX_ACCOUNTS_PER_TASK = 1000
 MIN_ACCOUNTS_PER_TASK = 1
 
-app = Celery('sync_accounts', broker='redis://localhost:6379')
+app = Celery('sync_accounts', broker='redis://localhost:6379/2')
 
 @app.task(base=RestartableTask)
 def sync_accounts(mongo_database, accounts):
