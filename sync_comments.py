@@ -7,7 +7,7 @@ import time
 import sys
 from tqdm import tqdm
 from comments import UpdatedComment
-from utils import get_connectors
+from utils import get_connectors, RestartableTask
 from celery import Celery
 import click
 from time import sleep
@@ -17,7 +17,7 @@ MIN_COMMENTS_PER_TASK = 1
 
 app = Celery('sync_comments', broker='redis://localhost:6379')
 
-@app.task
+@app.task(base=RestartableTask)
 def sync_comments(mongo_database, comments):
   rpc, connector = get_connectors(mongo_database)
   for comment in tqdm(comments):

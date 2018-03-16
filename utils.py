@@ -1,6 +1,7 @@
 from connectors import MongoConnector, ElasticConnector
 from pistonapi.steemnoderpc import SteemNodeRPC
 from functools import wraps
+import celery
 
 RESTART_INTERVAL = 60 * 5
 
@@ -15,14 +16,6 @@ def get_connectors(database, connector_type='mongo'):
   connector = connectors[connector_type](database)
   return rpc, connector
 
-def restart_on_error(f):
-  @wraps(f)
-  def wrapper(*args, **kwargs):
-    try:
-      print("Running in safe mode")
-      return f(*args, **kwargs)
-    except Exception as e:
-      print("Exception occured.")
-      f.retry(countdown=RESTART_INTERVAL, exc=e)
-  return wrapper
-
+class RestartableTask(celery.Task):
+  def on_failure(self, exc, task_id, args, kwargs, einfo):
+    self.retry(countdown=RESTART_INTERVAL, exc=exc)

@@ -7,7 +7,7 @@ import time
 import sys
 from tqdm import tqdm
 from accounts import UpdatedAccount
-from utils import get_connectors
+from utils import get_connectors, RestartableTask
 from celery import Celery
 import click
 from time import sleep
@@ -17,7 +17,7 @@ MIN_ACCOUNTS_PER_TASK = 1
 
 app = Celery('sync_accounts', broker='redis://localhost:6379')
 
-@app.task
+@app.task(base=RestartableTask)
 def sync_accounts(mongo_database, accounts):
   rpc, connector = get_connectors(mongo_database)
   for account in tqdm(accounts):
