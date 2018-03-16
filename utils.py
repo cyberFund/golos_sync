@@ -2,6 +2,9 @@ from connectors import MongoConnector, ElasticConnector
 from pistonapi.steemnoderpc import SteemNodeRPC
 from functools import wraps
 import celery
+import logging
+
+logging.basicConfig(filename=config['log_path'], format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %I:%M:%S %p')
 
 RESTART_INTERVAL = 60 * 5
 
@@ -17,4 +20,5 @@ def get_connectors(database, connector_type='mongo'):
 
 class RestartableTask(celery.Task):
   def on_failure(self, exc, task_id, args, kwargs, einfo):
+    logging.warning("Task {} ({}): {}".format(task_id, args, exc))
     self.retry(countdown=RESTART_INTERVAL, exc=exc)
