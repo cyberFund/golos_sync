@@ -27,6 +27,7 @@ $ celery flower
 Synchronization Golos architecture: ![Synchronization Golos architecture](synchronization_golos_architecture.png)
 
 ## Block structure
+Структура заголовков блоков описана [здесь](https://developers.golos.io/golos-v0.17.0/d9/d26/structgolos_1_1protocol_1_1block__header.html).
 > example: 
 ```javascript 
 {'timestamp': '2017-03-06T13:43:57', 
