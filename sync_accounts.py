@@ -9,8 +9,11 @@ from tqdm import tqdm
 from accounts import UpdatedAccount
 from utils import get_connectors
 from celery import Celery
+import click
+from time import sleep
 
-ACCOUNTS_PER_TASK = 10000
+MAX_ACCOUNTS_PER_TASK = 1000
+MIN_ACCOUNTS_PER_TASK = 1
 
 app = Celery('sync_accounts', broker='redis://localhost:6379')
 
@@ -22,16 +25,30 @@ def sync_accounts(mongo_database, accounts):
     account_object = UpdatedAccount(account)
     connector.save_instance(account_object)
 
-if __name__ == '__main__':
-  rpc, connector = get_connectors(sys.argv[1])
+@click.command()
+@click.option('--connector', help='Type of connector (mongo/elasticsearch).', default='mongo')
+@click.option('--database', help='Name of database', default='golos_transactions')
+def sync_all_accounts(connector, database):
+  rpc, connector = get_connectors(database, connector)
   config = rpc.get_config()
   block_interval = config["STEEMIT_BLOCK_INTERVAL"]
-  accounts = connector.get_instances_to_update('account')
-  task_accounts = []
-  for account in tqdm(accounts):
-    task_accounts.append(account)
-    if len(task_accounts) >= ACCOUNTS_PER_TASK:
-      sync_accounts.delay(sys.argv[1], task_accounts)
-      task_accounts = []
-  if len(task_accounts):
-    sync_accounts.delay(sys.argv[1], task_accounts)
+  while True: 
+    accounts_per_task = MAX_ACCOUNTS_PER_TASK
+    accounts = connector.get_instances_to_update('account')
+    while len(accounts) < accounts_per_task:
+      sleep(block_interval)
+      accounts = connector.get_instances_to_update('account')
+      accounts_per_task = max(accounts_per_task / 10, MIN_ACCOUNTS_PER_TASK)
+    task_accounts = []
+    for account in tqdm(accounts):
+      task_accounts.append(account)
+      if len(task_accounts) >= accounts_per_task:
+        sync_accounts.delay(database, task_accounts)
+        connector.update_instances('account', task_accounts)
+        task_accounts = []
+    if len(task_accounts):
+      connector.update_instances('account', task_accounts)
+      sync_accounts.delay(database, task_accounts)
+
+if __name__ == '__main__':
+  sync_all_accounts()
