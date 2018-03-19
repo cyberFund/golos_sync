@@ -4,7 +4,7 @@ from functools import wraps
 import celery
 import logging
 
-logging.basicConfig(filename=config['log_path'], format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %I:%M:%S %p')
+logging.basicConfig(filename='log.log', format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %I:%M:%S %p')
 
 RESTART_INTERVAL = 60 * 5
 

@@ -71,16 +71,19 @@ class ElasticConnector(Connector):
   def __init__(self, database, host='http://localhost:9200/'):
     self.client = ElasticSearch(host)
     self.index_pattern = database + "_{}"
-    self.create_index()
 
   def query_to_id(self, query):
-    "_".join(k + "_" + v for k,v in query)
+    "_".join(k + "_" + v for k,v in query.items())
 
+  # TODO do not use document type
   def create_index(self, index):
     try:
       self.client.create_index(self.index_pattern.format(index))
     except Exception as e:
       pass
+
+  def set_mapping(self, index, document_type):
+    self.client.put_mapping(index, document_type, {"dynamic": True})
 
   def save_block(self, block):
     super().save_block(block)
@@ -92,6 +95,7 @@ class ElasticConnector(Connector):
   # TODO add query usage
   def update_by_query(self, collection, query, document):
     self.create_index(collection)
+    self.set_mapping(collection, collection)
     document_id = document.get_id()
     document_body = document.to_dict()
     if "_id" in document_body.keys():
@@ -115,6 +119,7 @@ class ElasticConnector(Connector):
       return 0
 
   def update_last_block(self, last_block):
+    self.create_index('status')
     self.client.index(
       self.index_pattern.format('status'), 
       'status', 
