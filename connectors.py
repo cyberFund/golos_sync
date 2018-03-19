@@ -86,11 +86,13 @@ class ElasticConnector(Connector):
     query = block.get_query()
     self.update_by_query(collection, query, block)
 
+  # TODO add query usage
   def update_by_query(self, collection, query, document):
     document_id = document.get_id()
     document_body = document.to_dict()
-    del document_body['_id']
-    self.client.index(self.index, collection, document_body, id=document_id)
+    if "_id" in document_body.keys():
+      del document_body['_id']
+    self.client.index(self.index, collection, document_body, id=str(query))
 
   def find_last_block(self):
     try:
@@ -103,7 +105,7 @@ class ElasticConnector(Connector):
     self.client.index(self.index, 'status', {'value': last_block}, id='height_all_tsx')
 
   def save_instance(self, instance):
-    self.update_by_query(collection, query, block)
+    self.update_by_query(instance.get_collection(), {"_id": instance.get_id()}, instance)
 
   def get_instances_to_update(self, collection):
     hits = self.client.search("need_update:true", index=self.index, doc_type=collection)['hits']['hits']

@@ -1,4 +1,4 @@
-[Bfrom datetime import datetime
+from datetime import datetime
 from pistonapi.steemnoderpc import SteemNodeRPC
 from connectors import MongoConnector
 from pprint import pprint

@@ -30,8 +30,8 @@ def process_block(connector, block, blockid):
       process_op(connector, opObj, block, blockid)
 
 @app.task(base=RestartableTask)
-def sync_tsx(mongo_database, blocks):
-  rpc, connector = get_connectors(mongo_database)
+def sync_tsx(connector, database, blocks):
+  rpc, connector = get_connectors(database, connector)
   for block_number in tqdm(blocks):
     block = rpc.get_block(block_number)
     process_block(connector, block, block_number)
@@ -41,6 +41,7 @@ def sync_tsx(mongo_database, blocks):
 @click.option('--connector', help='Type of connector (mongo/elasticsearch).', default='mongo')
 @click.option('--database', help='Name of database', default='golos_transactions')
 def sync_all_tsx(connector, database):
+  connector_type = connector
   rpc, connector = get_connectors(database, connector)
   config = rpc.get_config()
   block_interval = config["STEEMIT_BLOCK_INTERVAL"]
@@ -56,7 +57,7 @@ def sync_all_tsx(connector, database):
 
     new_blocks = list(range(last_block, current_block))
     for chunk in tqdm(np.array_split(new_blocks, round((current_block - last_block) / blocks_per_task))):
-      sync_tsx.delay(database, chunk.tolist())
+      sync_tsx.delay(connector_type, database, chunk.tolist())
     connector.update_last_block(current_block)
     last_block = current_block
 
