@@ -68,14 +68,17 @@ class MongoConnector(Connector):
       self.database[collection].update_one({'_id': instance['_id']}, {"$set": {'need_update': False}})
 
 class ElasticConnector(Connector):
-  def __init__(self, index, host='http://localhost:9200/'):
+  def __init__(self, database, host='http://localhost:9200/'):
     self.client = ElasticSearch(host)
-    self.index = index
+    self.index_pattern = database + "_{}"
     self.create_index()
 
-  def create_index(self):
+  def query_to_id(self, query):
+    "_".join(k + "_" + v for k,v in query)
+
+  def create_index(self, index):
     try:
-      self.client.create_index(self.index)
+      self.client.create_index(self.index_pattern.format(index))
     except Exception as e:
       pass
 
@@ -88,29 +91,53 @@ class ElasticConnector(Connector):
 
   # TODO add query usage
   def update_by_query(self, collection, query, document):
+    self.create_index(collection)
     document_id = document.get_id()
     document_body = document.to_dict()
     if "_id" in document_body.keys():
       del document_body['_id']
-    self.client.index(self.index, collection, document_body, id=str(query))
+    self.client.index(
+      self.index_pattern.format(collection), 
+      collection, 
+      document_body, 
+      id=str(query)
+    )
 
   def find_last_block(self):
     try:
-      document = self.client.get(self.index, 'status', 'height_all_tsx')['_source']
+      document = self.client.get(
+        self.index_pattern.format('status'), 
+        'status', 
+        'height_all_tsx'
+      )['_source']
       return document['value']
     except ElasticHttpNotFoundError as e:
       return 0
 
   def update_last_block(self, last_block):
-    self.client.index(self.index, 'status', {'value': last_block}, id='height_all_tsx')
+    self.client.index(
+      self.index_pattern.format('status'), 
+      'status', 
+      {'value': last_block}, 
+      id='height_all_tsx'
+    )
 
   def save_instance(self, instance):
     self.update_by_query(instance.get_collection(), {"_id": instance.get_id()}, instance)
 
   def get_instances_to_update(self, collection):
-    hits = self.client.search("need_update:true", index=self.index, doc_type=collection)['hits']['hits']
+    hits = self.client.search(
+      "need_update:true", 
+      index=self.index_pattern.format(collection), 
+      doc_type=collection
+    )['hits']['hits']
     return [hit['_source'] for hit in hits]
 
   def update_instances(self, collection, instances):
     for instance in instances:
-      self.client.index(self.index, collection, {'need_update': False}, id=instance['_id'])
+      self.client.index(
+        self.index_pattern.format(collection), 
+        collection, 
+        {'need_update': False}, 
+        id=instance['_id']
+      )
