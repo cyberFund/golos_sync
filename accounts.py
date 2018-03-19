@@ -24,6 +24,9 @@ class Account:
   def get_collection(self):
     return "account_object"
 
+  def get_query(self):
+    return {"_id": self.get_id()}
+
 class NeedUpdateAccount(Account):
   def __init__(self, account):
     super().__init__(account)

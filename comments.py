@@ -24,6 +24,9 @@ class Comment:
   def get_collection(self):
     return "comment_object"
 
+  def get_query(self):
+    return {"_id": self.get_id()}
+
 class ParentComment(Comment):
   pass
 
