@@ -82,14 +82,6 @@ class ElasticConnector(Connector):
     except Exception as e:
       pass
 
-  def fix_mapping(self, document_type, document):
-    mapping = self.client.get_mapping(self.index, document_type)['mappings'][document_type]
-    for field, params in mapping.items():
-      if field in document.keys():
-        if (params['type'] == 'object') and (type(document[field]) is not dict):
-          del document[field] 
-    return document
-
   def save_block(self, block):
     super().save_block(block)
     collection = block.get_collection()
@@ -99,17 +91,19 @@ class ElasticConnector(Connector):
 
   # TODO search by query instead of using id
   def update_by_query(self, collection, query, document):
-    self.fix_mapping(collection, document)
-    document_id = document.get_id()
-    document_body = document.to_dict()
-    if "_id" in document_body.keys():
-      del document_body['_id']
-    self.client.index(
-      self.index, 
-      collection, 
-      document_body, 
-      id=self.query_to_id(query)
-    )
+    try:
+      document_id = document.get_id()
+      document_body = document.to_dict()
+      if "_id" in document_body.keys():
+        del document_body['_id']
+      self.client.index(
+        self.index, 
+        collection, 
+        document_body, 
+        id=self.query_to_id(query)
+      )
+    except:
+      pass
 
   def find_last_block(self):
     try:
