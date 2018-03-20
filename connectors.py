@@ -82,8 +82,13 @@ class ElasticConnector(Connector):
     except Exception as e:
       pass
 
-  def set_dynamic_mapping(self, document_type):
-    self.client.put_mapping(self.index, document_type, {"dynamic": True})
+  def fix_mapping(self, document_type, document):
+    mapping = self.client.get_mapping(self.index, document_type)['mappings'][document_type]
+    for field, params in mapping.items():
+      if field in document.keys():
+        if (params['type'] == 'object') and (type(document[field]) is not dict):
+          del document[field] 
+    return document
 
   def save_block(self, block):
     super().save_block(block)
@@ -94,7 +99,7 @@ class ElasticConnector(Connector):
 
   # TODO search by query instead of using id
   def update_by_query(self, collection, query, document):
-    self.set_dynamic_mapping(collection)
+    self.fix_mapping(collection, document)
     document_id = document.get_id()
     document_body = document.to_dict()
     if "_id" in document_body.keys():
