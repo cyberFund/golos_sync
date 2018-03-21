@@ -18,8 +18,8 @@ MIN_COMMENTS_PER_TASK = 1
 app = Celery('sync_comments', broker='redis://localhost:6379/1')
 
 @app.task(base=RestartableTask)
-def sync_comments(mongo_database, comments):
-  rpc, connector = get_connectors(mongo_database)
+def sync_comments(connector, database, comments):
+  rpc, connector = get_connectors(database, connector)
   for comment in tqdm(comments):
     comment.update(rpc.get_content(comment['author'], comment['permlink']))
     comment_object = UpdatedComment(comment)
@@ -29,6 +29,7 @@ def sync_comments(mongo_database, comments):
 @click.option('--connector', help='Type of connector (mongo/elasticsearch).', default='mongo')
 @click.option('--database', help='Name of database', default='golos_transactions')
 def sync_all_comments(connector, database):
+  connector_type = connector
   rpc, connector = get_connectors(database, connector)
   config = rpc.get_config()
   block_interval = config["STEEMIT_BLOCK_INTERVAL"]
@@ -43,11 +44,11 @@ def sync_all_comments(connector, database):
     for comment in tqdm(comments):
       task_comments.append(comment)
       if len(task_comments) >= comments_per_task:
-        sync_comments.delay(database, task_comments)
+        sync_comments.delay(connector_type, database, task_comments)
         connector.update_instances('comment_object', task_comments)
         task_comments = []
     if len(task_comments):
-      sync_comments.delay(database, task_comments)
+      sync_comments.delay(connector_type, database, task_comments)
       connector.update_instances('comment_object', task_comments)
 
 if __name__ == '__main__':

@@ -68,13 +68,14 @@ class MongoConnector(Connector):
       self.database[collection].update_one({'_id': instance['_id']}, {"$set": {'need_update': False}})
 
 class ElasticConnector(Connector):
+  MAX_SIZE = 1000
   def __init__(self, database, host='http://localhost:9200/'):
     self.client = ElasticSearch(host)
     self.index = database
     self.create_index()
 
   def query_to_id(self, query):
-    "_".join(k + "_" + v for k,v in query.items())
+    return "_".join(str(k) + "_" + str(v) for k,v in query.items()).replace("/", "_")
 
   def create_index(self):
     try:
@@ -102,7 +103,8 @@ class ElasticConnector(Connector):
         document_body, 
         id=self.query_to_id(query)
       )
-    except:
+    except Exception as e:
+      print(e)
       pass
 
   def find_last_block(self):
@@ -131,10 +133,16 @@ class ElasticConnector(Connector):
     hits = self.client.search(
       "need_update:true", 
       index=self.index, 
-      doc_type=collection
+      doc_type=collection,
+      size=self.MAX_SIZE
     )['hits']['hits']
     return [{**hit['_source'], **{"_id": hit["_id"]}} for hit in hits]
 
   def update_instances(self, collection, instances):
     for instance in instances:
-      self.update_by_query(collection, {"_id": instance["_id"]}, {'need_update': True})
+      self.client.index(
+        self.index, 
+        collection, 
+        {'need_update': False},
+        id=instance["_id"]
+      )
