@@ -133,8 +133,8 @@ class ElasticConnector(Connector):
       index=self.index, 
       doc_type=collection
     )['hits']['hits']
-    return [hit['_source'] for hit in hits]
+    return [{**hit['_source'], **{"_id": hit["_id"]}} for hit in hits]
 
   def update_instances(self, collection, instances):
     for instance in instances:
-      self.update_by_query(collection, instance.get_query(), {'need_update': True})
+      self.update_by_query(collection, {"_id": instance["_id"]}, {'need_update': True})
