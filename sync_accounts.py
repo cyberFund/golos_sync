@@ -19,6 +19,9 @@ app = Celery('sync_accounts', broker='redis://localhost:6379/2')
 
 @app.task(base=RestartableTask)
 def sync_accounts(connector, database, accounts):
+  """
+    Celery task that extends accounts with a new info from API and saves it to a database
+  """
   rpc, connector = get_connectors(database, connector)
   for account in tqdm(accounts):
     account.update(rpc.get_account(account['name']))
@@ -29,6 +32,9 @@ def sync_accounts(connector, database, accounts):
 @click.option('--connector', help='Type of connector (mongo/elasticsearch).', default='mongo')
 @click.option('--database', help='Name of database', default='golos_transactions')
 def sync_all_accounts(connector, database):
+  """
+    Creates multiple celery tasks to process all accounts that are waiting for an update 
+  """
   connector_type = connector
   rpc, connector = get_connectors(database, connector)
   config = rpc.get_config()
