@@ -14,11 +14,24 @@ connectors = {
 }
 
 def get_connectors(database, connector_type='mongo'):
+  """
+    Returns connectors to a golos node and to a specified database
+    Database type should be selected from a list:
+    - Mongo
+    - Elasticsearch
+  """
   rpc = SteemNodeRPC("ws://localhost:8090", apis=["follow", "database"])
   connector = connectors[connector_type](database)
   return rpc, connector
 
 class RestartableTask(celery.Task):
+  """
+    Class to make all celery tasks restartable
+  """
   def on_failure(self, exc, task_id, args, kwargs, einfo):
+    """
+      Puts log entry abount an exception
+      and restarts task when RESTART_INTERVAL ends
+    """
     logging.warning("Task {} ({}): {}".format(task_id, args, exc))
     self.retry(countdown=RESTART_INTERVAL, exc=exc)
