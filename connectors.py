@@ -99,13 +99,12 @@ class ElasticConnector(Connector):
       self.set_dynamic_mapping(collection)
       document_id = document.get_id()
       document_body = document.to_dict()
-      print(document_body)
       if "_id" in document_body.keys():
         del document_body['_id']
       self.client.index(
         self.index, 
         collection, 
-        document_body, 
+        document_body,
         id=self.query_to_id(query)
       )
     except Exception as e:
@@ -145,9 +144,9 @@ class ElasticConnector(Connector):
 
   def update_instances(self, collection, instances):
     for instance in instances:
-      self.client.index(
+      self.client.update(
         self.index, 
         collection, 
-        {'need_update': False},
-        id=instance["_id"]
+        instance["_id"],
+        doc={'need_update': False}
       )

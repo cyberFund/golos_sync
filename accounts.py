@@ -33,6 +33,10 @@ class NeedUpdateAccount(Account):
     account['need_update'] = True
 
 class UpdatedAccount(Account):
+  BLACKLIST = ['posting', 'owner', 'active']
   def __init__(self, account):
     super().__init__(account)
     account['need_update'] = False
+    for key in self.BLACKLIST:
+      if key in account.keys():
+        del account[key]
