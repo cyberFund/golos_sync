@@ -22,7 +22,10 @@ class Comment:
     pass
 
   def get_collection(self):
-    return "comment"
+    return "comment_object"
+
+  def get_query(self):
+    return {"_id": self.get_id()}
 
 class ParentComment(Comment):
   pass
@@ -39,6 +42,10 @@ class UpdatedComment(Comment):
     self.convert_fields()
     self.add_scanned()
     self.remove_need_update()
+    self.fix_metadata()
+
+  def fix_metadata(self):
+    del self.comment['json_metadata']
 
   def fix_active_votes(self):
     active_votes = []

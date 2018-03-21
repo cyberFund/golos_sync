@@ -10,13 +10,13 @@ from blocks import create_block
 import numpy as np
 from celery import Celery
 from time import sleep
-from utils import get_connectors
+from utils import get_connectors, RestartableTask
 import click
 
-MAX_BLOCKS_PER_TASK = 1000
+MAX_BLOCKS_PER_TASK = 10000
 MIN_BLOCKS_PER_TASK = 10
 
-app = Celery('sync_all_tsx', broker='redis://localhost:6379')
+app = Celery('sync_all_tsx', broker='redis://localhost:6379/0')
 
 def process_op(connector, opObj, block, blockid):
   opType = opObj[0]
@@ -29,9 +29,9 @@ def process_block(connector, block, blockid):
     for opObj in tx['operations']:
       process_op(connector, opObj, block, blockid)
 
-@app.task
-def sync_tsx(mongo_database, blocks):
-  rpc, connector = get_connectors(mongo_database)
+@app.task(base=RestartableTask)
+def sync_tsx(connector, database, blocks):
+  rpc, connector = get_connectors(database, connector)
   for block_number in tqdm(blocks):
     block = rpc.get_block(block_number)
     process_block(connector, block, block_number)
@@ -41,6 +41,7 @@ def sync_tsx(mongo_database, blocks):
 @click.option('--connector', help='Type of connector (mongo/elasticsearch).', default='mongo')
 @click.option('--database', help='Name of database', default='golos_transactions')
 def sync_all_tsx(connector, database):
+  connector_type = connector
   rpc, connector = get_connectors(database, connector)
   config = rpc.get_config()
   block_interval = config["STEEMIT_BLOCK_INTERVAL"]
@@ -56,7 +57,7 @@ def sync_all_tsx(connector, database):
 
     new_blocks = list(range(last_block, current_block))
     for chunk in tqdm(np.array_split(new_blocks, round((current_block - last_block) / blocks_per_task))):
-      sync_tsx.delay(database, chunk.tolist())
+      sync_tsx.delay(connector_type, database, chunk.tolist())
     connector.update_last_block(current_block)
     last_block = current_block
 

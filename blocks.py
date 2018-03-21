@@ -116,8 +116,10 @@ class CustomJSONBlock(Block):
       self.operation = document
       if self.data[0] == 'reblog':
           self.convert_reblog()
-      if self.data[0] == 'follow':
+      elif self.data[0] == 'follow':
           self.convert_follow()
+      else:
+          self.convert_custom_json()
 
   def convert_reblog(self):
     self.collection = "reblog"
@@ -133,6 +135,16 @@ class CustomJSONBlock(Block):
       'blockid': self.block_id,
       'follower': self.operation['follower'],
       'following': self.operation['following']
+    }
+
+  def convert_custom_json(self):
+    document = self.operation.copy()
+    del document['blockid']
+    del document['ts']
+    self.collection = "custom_json"
+    self.query = {
+      'blockid': self.block_id,
+      'json': json.dumps(document)
     }
 
   def get_collection(self):

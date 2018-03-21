@@ -22,7 +22,10 @@ class Account:
     pass
 
   def get_collection(self):
-    return "account"
+    return "account_object"
+
+  def get_query(self):
+    return {"_id": self.get_id()}
 
 class NeedUpdateAccount(Account):
   def __init__(self, account):
@@ -30,6 +33,10 @@ class NeedUpdateAccount(Account):
     account['need_update'] = True
 
 class UpdatedAccount(Account):
+  BLACKLIST = ['posting', 'owner', 'active']
   def __init__(self, account):
     super().__init__(account)
     account['need_update'] = False
+    for key in self.BLACKLIST:
+      if key in account.keys():
+        del account[key]
