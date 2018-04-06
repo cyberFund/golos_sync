@@ -1,5 +1,6 @@
 import unittest
 from pistonapi import SteemNodeRPC
+from time import sleep
 
 class PistonapiTestCase(unittest.TestCase):
   def setUp(self):
@@ -20,7 +21,6 @@ class PistonapiTestCase(unittest.TestCase):
 
   def test_get_config(self):
     config = self.client.get_config()
-    print(config)
     assert "STEEMIT_BLOCK_INTERVAL" in config.keys()
 
   def test_get_dynamic_global_properties(self):
@@ -29,7 +29,9 @@ class PistonapiTestCase(unittest.TestCase):
 
   def test_get_block(self):
     block = self.client.get_block(TEST_BLOCK_NUMBER)
+    operation = block['transactions'][0]['operations'][0]
     assert len(block['transactions'][0]['operations'])
+    assert len(operation) == 2
 
   def test_get_content(self):
     content = self.client.get_content(*TEST_COMMENT)
@@ -44,3 +46,4 @@ TEST_COMMENT = '@goldvoice/new-public-nodes'[1:].split('/')
 TEST_ACCOUNT = "litvintech"
 
 # ssh -L 8090:localhost:8090 root@78.46.57.29
+# Как затестить эксепшен и рестарт на эксепшен?

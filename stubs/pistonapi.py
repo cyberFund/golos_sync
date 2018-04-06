@@ -18,13 +18,19 @@ class SteemNodeRPC:
     }
 
   def _send_request(self, request):
-    request_string = json.dumps(request)
-    response = requests.get(
-      self.node_url,
-      data=request_string,
-      headers={"content-type": "application/json"}
-    ).json()
-    return response
+    # Test exception
+    try:
+      request_string = json.dumps(request)
+      response = requests.get(
+        self.node_url,
+        data=request_string,
+        headers={"content-type": "application/json"}
+      ).json()
+      return response
+    except ConnectionRefusedError:
+      print("Lost connection...")
+      sleep(1)
+      return self._send_request(request)
 
   def get_config(self):
     request = self._create_method_call_request(
@@ -52,8 +58,9 @@ class SteemNodeRPC:
       [block_number, False]
     )
     result = self._send_request(block_request)['result']
+    operations = self._send_request(operations_request)['result']
     result['transactions'] = [{
-      'operations': self._send_request(operations_request)['result']
+      'operations': [operation['op'] for operation in operations]
     }]
     return result
 

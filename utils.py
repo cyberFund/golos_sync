@@ -1,5 +1,5 @@
 from connectors import MongoConnector, ElasticConnector
-from pistonapi.steemnoderpc import SteemNodeRPC
+from stubs.pistonapi import SteemNodeRPC
 from functools import wraps
 import celery
 import logging
@@ -20,7 +20,7 @@ def get_connectors(database, connector_type='mongo'):
     - Mongo
     - Elasticsearch
   """
-  rpc = SteemNodeRPC("ws://localhost:8090", apis=["follow", "database"])
+  rpc = SteemNodeRPC("http://localhost:8090")
   connector = connectors[connector_type](database)
   return rpc, connector
 
